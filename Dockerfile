@@ -1,5 +1,6 @@
 # Root-level Dockerfile to deploy backend without monorepo settings
-# Builds and runs the FastAPI backend located in ./backend
+# Builds and runs the FastAPI backend located in ../backend
+# Note: This Dockerfile should be run from the project root with build context at root level
 
 FROM python:3.13-slim
 

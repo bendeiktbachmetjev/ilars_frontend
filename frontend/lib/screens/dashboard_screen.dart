@@ -11,7 +11,9 @@ import '../l10n/app_localizations.dart';
 import '../widgets/lars_line_chart.dart' show LarsLineChartState;
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  const DashboardScreen({super.key, this.onQuestionnaireSubmitted});
+
+  final VoidCallback? onQuestionnaireSubmitted;
 
   @override
   State<DashboardScreen> createState() => DashboardScreenState();
@@ -152,6 +154,7 @@ class DashboardScreenState extends State<DashboardScreen> {
       if (openedQuestionnaireType == 'weekly') {
         _statisticsKey.currentState?.refresh();
       }
+      widget.onQuestionnaireSubmitted?.call();
     }
     // If result is null or false, user closed without submitting - do nothing
   }

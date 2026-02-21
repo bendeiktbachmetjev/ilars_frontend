@@ -1,4 +1,4 @@
-# iLARS FrontEnd
+# iLARS frontend
 
 A new Flutter project.
 

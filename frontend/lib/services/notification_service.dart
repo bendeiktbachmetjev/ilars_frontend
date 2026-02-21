@@ -72,20 +72,30 @@ class NotificationService {
     }
   }
 
-  /// Schedule daily notification at 19:00 (7 PM)
+  /// Schedule a one-time reminder at next 19:00 only if [shouldRemind] returns true
+  /// (e.g. from backend: today's questionnaire exists and is not filled).
+  /// If [shouldRemind] is null or returns true, schedules; if it returns false, cancels.
   Future<void> scheduleDailyNotification({
     required String title,
     required String body,
+    Future<bool>? shouldRemind,
   }) async {
-    // Cancel existing notification if any
+    if (shouldRemind != null) {
+      final remind = await shouldRemind;
+      if (!remind) {
+        await cancelDailyNotification();
+        return;
+      }
+    }
+
     await cancelDailyNotification();
 
-    // Schedule daily notification at 19:00
+    final scheduledDate = _getNextNotificationTime();
     await _notificationsPlugin.zonedSchedule(
       dailyNotificationId,
       title,
       body,
-      _getNextNotificationTime(),
+      scheduledDate,
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_reminder',
@@ -104,7 +114,7 @@ class NotificationService {
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
+      matchDateTimeComponents: null,
     );
   }
 

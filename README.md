@@ -3,7 +3,7 @@
 1) Create a new empty GitHub repo and provide the remote URL
 2) Initialize git and push this project
 ```
-cd /Users/benediktbachmetjev/StudioProjects/ilars/FrontEnd
+cd /Users/benediktbachmetjev/StudioProjects/ilars/frontend
 git init
 git add .
 git commit -m "Initial commit: backend + frontend"
@@ -11,7 +11,7 @@ git branch -M main
 git remote add origin <YOUR_GITHUB_REPO_URL>
 git push -u origin main
 ```
-3) In Railway: New Project → Deploy from GitHub → select this repo → set root to `backend/`
+3) In Railway: New Project → Deploy from GitHub → select this repo → set root to `../backend/` (or use backend repo directly)
 4) Railway will build using `backend/Dockerfile`
 5) Set Variables:
    - `DATABASE_URL` → your Supabase pooler URI with `sslmode=require`

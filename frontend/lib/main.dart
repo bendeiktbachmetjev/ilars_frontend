@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/dashboard_screen.dart' show DashboardScreen, DashboardScreenState;
 import 'screens/profile_screen.dart';
+import 'services/api_service.dart';
 import 'services/notification_service.dart';
 
 void main() async {
@@ -49,16 +50,17 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   final GlobalKey<DashboardScreenState> _dashboardKey = GlobalKey<DashboardScreenState>();
 
   late final List<Widget> _screens = [
-    DashboardScreen(key: _dashboardKey),
+    DashboardScreen(
+      key: _dashboardKey,
+      onQuestionnaireSubmitted: () => _scheduleNotification(),
+    ),
     ProfileScreen(onPatientCodeChanged: _refreshDashboard),
   ];
-
-  bool _notificationScheduled = false;
 
   // Method to refresh dashboard when patient code changes
   void _refreshDashboard() {
@@ -66,12 +68,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_notificationScheduled) {
-      _notificationScheduled = true;
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
       _scheduleNotification();
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scheduleNotification();
   }
 
   void _onItemTapped(int index) {
@@ -80,8 +98,24 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  /// Only remind if backend says there is a questionnaire due today and not yet filled.
+  /// Works the same whether user fills from app or browser.
+  Future<bool> _shouldRemindToday() async {
+    final api = ApiService();
+    final patientCode = await api.getPatientCode();
+    if (patientCode == null || patientCode.isEmpty) return false;
+    try {
+      final response = await api.getNextQuestionnaire(patientCode: patientCode);
+      if (response['status'] != 'ok') return false;
+      final questionnaireType = response['questionnaire_type'];
+      final isTodayFilled = response['is_today_filled'] as bool? ?? false;
+      return questionnaireType != null && !isTodayFilled;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> _scheduleNotification() async {
-    // Get localized strings
     final l10n = AppLocalizations.of(context);
     if (l10n == null) return;
 
@@ -89,6 +123,7 @@ class _HomePageState extends State<HomePage> {
     await notificationService.scheduleDailyNotification(
       title: l10n.notificationTitle,
       body: l10n.notificationBody,
+      shouldRemind: _shouldRemindToday,
     );
   }
 
