@@ -144,6 +144,15 @@ class ApiService {
     }
   }
 
+  Future<http.Response> sendSteps({
+    required String patientCode,
+    required List<Map<String, dynamic>> steps,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/sendSteps');
+    final body = jsonEncode({'steps': steps});
+    return http.post(uri, headers: _headers(patientCode), body: body);
+  }
+
   Future<Map<String, dynamic>> getNextQuestionnaire({
     required String patientCode,
   }) async {

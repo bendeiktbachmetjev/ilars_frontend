@@ -5,6 +5,7 @@ import 'screens/dashboard_screen.dart' show DashboardScreen, DashboardScreenStat
 import 'screens/profile_screen.dart';
 import 'services/api_service.dart';
 import 'services/notification_service.dart';
+import 'services/step_tracking_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,21 @@ void main() async {
   await notificationService.initialize();
   
   runApp(const MyApp());
+
+  // Background step sync (non-blocking)
+  _initStepTracking();
+}
+
+Future<void> _initStepTracking() async {
+  try {
+    final stepService = StepTrackingService.instance;
+    final granted = await stepService.requestPermission();
+    if (granted) {
+      await stepService.syncSteps(days: 7);
+    }
+  } catch (_) {
+    // Non-critical — app works without step data
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -83,6 +99,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _scheduleNotification();
+      StepTrackingService.instance.syncSteps(days: 3);
     }
   }
 

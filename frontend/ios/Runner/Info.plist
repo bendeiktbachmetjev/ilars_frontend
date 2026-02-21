@@ -54,5 +54,9 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>iLARS reads your daily step count to help your doctor track your recovery progress.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>iLARS does not write health data.</string>
 </dict>
 </plist>
