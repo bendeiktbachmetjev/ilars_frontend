@@ -386,19 +386,13 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
                       max: 10,
                       onChanged: (v) => setState(() => bloating = v.round()),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
+                    // Impact on life
                     _buildSlider(
-                      label: AppLocalizations.of(context)!.dailyImpactScore,
+                      label: AppLocalizations.of(context)!.impactOnLife,
                       value: impactScore.toDouble(),
                       max: 10,
                       onChanged: (v) => setState(() => impactScore = v.round()),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildSlider(
-                      label: AppLocalizations.of(context)!.activityInterference,
-                      value: activityInterfere.toDouble(),
-                      max: 10,
-                      onChanged: (v) => setState(() => activityInterfere = v.round()),
                     ),
                     const SizedBox(height: 20),
                     // Drink consumption
