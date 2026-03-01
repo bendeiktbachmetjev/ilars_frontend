@@ -54,14 +54,10 @@ We may:
 •	Make changes without prior notice
 •	Any liability arising from your use of iLARS shall not exceed the total fees (if any) paid by you for the App during the previous twelve (12) months.
 Major changes will be communicated via in-app messages or emails (if provided).
-11. Account Deletion & Data Removal You may delete your data by:
-•	Using the in-app data deletion tool
-•	Contacting us at [Insert Contact Email]
+11. Account Deletion & Data Removal You may delete your data by request
 Upon verification, we will erase associated data, unless retention is required by law or ongoing scientific research ethics.
 12. Contact Us 
-Email: [Insert Legal/Support Email]
-Data Protection Officer (if applicable): [Insert Name + Email]
-Mailing Address: [Insert Organization Address]
+Email: audrius.dulskas@nvc.santa.lt
 14. Future Monetization and Premium Services
 While iLARS is currently offered as a free, non-commercial service, we reserve the right to introduce optional premium features, paid subscriptions, or in-app purchases in the future. Any such monetization will be clearly disclosed to users and will remain optional.
 We will never charge for access to the basic symptom-tracking features or any data you have already entered. You will not be billed without your informed consent and prior notice.

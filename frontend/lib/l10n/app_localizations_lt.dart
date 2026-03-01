@@ -550,4 +550,21 @@ class AppLocalizationsLt extends AppLocalizations {
   @override
   String get weeklyWarning =>
       'Atkreipkite dėmesį: šis klausimynas skirtas įvertinti jūsų būklę per PRAĖJUSIĄ SAVAITĘ.';
+
+  @override
+  String get emailOptional => 'El. paštas (Nebūtina)';
+
+  @override
+  String get emailAddress => 'El. paštas';
+
+  @override
+  String get agreeToTerms =>
+      'Sutinku su Naudojimosi sąlygomis ir Privatumo politika';
+
+  @override
+  String get agreeToPromos =>
+      'Sutinku gauti reklaminius el. laiškus (Nebūtina)';
+
+  @override
+  String get logIn => 'Prisijungti';
 }

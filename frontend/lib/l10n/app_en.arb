@@ -666,6 +666,16 @@
 ,
   "dailyWarning": "Please note: this questionnaire refers to how you feel TODAY."
 ,
-  "weeklyWarning": "Please note: this questionnaire refers to your condition over the PAST WEEK."
+  "weeklyWarning": "Please note: this questionnaire refers to your condition over the PAST WEEK.",
+  "emailOptional": "Email (Optional)",
+  "@emailOptional": {"description": "Email field placeholder"},
+  "emailAddress": "Email Address",
+  "@emailAddress": {"description": "Email field label"},
+  "agreeToTerms": "I agree to the Terms of Use and Privacy Policy",
+  "@agreeToTerms": {"description": "Mandatory terms checkbox"},
+  "agreeToPromos": "I agree to receive promotional emails (Optional)",
+  "@agreeToPromos": {"description": "Optional promos checkbox"},
+  "logIn": "Log In",
+  "@logIn": {"description": "Dashboard login button text"}
 }
 

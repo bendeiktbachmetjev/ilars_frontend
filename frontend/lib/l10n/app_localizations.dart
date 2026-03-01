@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
 import 'app_localizations_lt.dart';
+import 'app_localizations_ru.dart';
 
 // ignore_for_file: type=lint
 
@@ -96,6 +97,7 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('lt'),
+    Locale('ru'),
   ];
 
   /// The application title
@@ -1075,6 +1077,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please note: this questionnaire refers to your condition over the PAST WEEK.'**
   String get weeklyWarning;
+
+  /// Email field placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Email (Optional)'**
+  String get emailOptional;
+
+  /// Email field label
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// Mandatory terms checkbox
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the Terms of Use and Privacy Policy'**
+  String get agreeToTerms;
+
+  /// Optional promos checkbox
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to receive promotional emails (Optional)'**
+  String get agreeToPromos;
+
+  /// Dashboard login button text
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get logIn;
 }
 
 class _AppLocalizationsDelegate
@@ -1088,7 +1120,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'lt'].contains(locale.languageCode);
+      <String>['en', 'lt', 'ru'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1101,6 +1133,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'lt':
       return AppLocalizationsLt();
+    case 'ru':
+      return AppLocalizationsRu();
   }
 
   throw FlutterError(

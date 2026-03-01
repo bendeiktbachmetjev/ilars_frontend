@@ -315,6 +315,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ],
+            ],
           ],
         ),
       ),
@@ -377,18 +378,18 @@ class _InlineLoginFormState extends State<_InlineLoginForm> {
   bool _agreedToPromos = false;
   bool _isSubmitting = false;
 
-  Future<void> _submit() async {
+  Future<void> _submit(AppLocalizations l10n) async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.error('Please enter a patient code'))),
+        SnackBar(content: Text(l10n.error('Please enter a patient code'))),
       );
       return;
     }
     
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.error('You must agree to the Terms of Use and Privacy Policy to continue'))),
+        SnackBar(content: Text(l10n.error(l10n.agreeToTerms))),
       );
       return;
     }
@@ -407,8 +408,8 @@ class _InlineLoginFormState extends State<_InlineLoginForm> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(validateResponse['detail'] != null 
-                ? 'Error: ${validateResponse['detail']}' 
-                : 'Invalid patient code'),
+                ? l10n.error(validateResponse['detail'])
+                : l10n.error('Invalid patient code')),
             backgroundColor: Colors.red[700],
           ),
         );
@@ -437,7 +438,7 @@ class _InlineLoginFormState extends State<_InlineLoginForm> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Login failed: ${e.toString()}'),
+          content: Text(l10n.error(e.toString())),
           backgroundColor: Colors.red[700],
         ),
       );
@@ -485,15 +486,15 @@ class _InlineLoginFormState extends State<_InlineLoginForm> {
           TextField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              hintText: 'Email (Optional)',
-              border: OutlineInputBorder(),
-              labelText: 'Email Address',
+            decoration: InputDecoration(
+              hintText: l10n.emailOptional,
+              border: const OutlineInputBorder(),
+              labelText: l10n.emailAddress,
             ),
           ),
           const SizedBox(height: 16),
           CheckboxListTile(
-            title: const Text('I agree to the Terms of Use and Privacy Policy', style: TextStyle(fontSize: 14)),
+            title: Text(l10n.agreeToTerms, style: const TextStyle(fontSize: 14)),
             value: _agreedToTerms,
             contentPadding: EdgeInsets.zero,
             controlAffinity: ListTileControlAffinity.leading,
@@ -504,7 +505,7 @@ class _InlineLoginFormState extends State<_InlineLoginForm> {
             },
           ),
           CheckboxListTile(
-            title: const Text('I agree to receive promotional emails (Optional)', style: TextStyle(fontSize: 14)),
+            title: Text(l10n.agreeToPromos, style: const TextStyle(fontSize: 14)),
             value: _agreedToPromos,
             contentPadding: EdgeInsets.zero,
             controlAffinity: ListTileControlAffinity.leading,
@@ -516,7 +517,7 @@ class _InlineLoginFormState extends State<_InlineLoginForm> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: _isSubmitting ? null : _submit,
+            onPressed: _isSubmitting ? null : () => _submit(l10n),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
@@ -526,7 +527,7 @@ class _InlineLoginFormState extends State<_InlineLoginForm> {
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Log In', style: TextStyle(fontSize: 16)),
+                : Text(l10n.logIn, style: const TextStyle(fontSize: 16)),
           ),
         ],
       ),

@@ -543,4 +543,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get weeklyWarning =>
       'Please note: this questionnaire refers to your condition over the PAST WEEK.';
+
+  @override
+  String get emailOptional => 'Email (Optional)';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get agreeToTerms => 'I agree to the Terms of Use and Privacy Policy';
+
+  @override
+  String get agreeToPromos =>
+      'I agree to receive promotional emails (Optional)';
+
+  @override
+  String get logIn => 'Log In';
 }

@@ -164,5 +164,10 @@
 ,
   "dailyWarning": "Atkreipkite dėmesį: šis klausimynas skirtas įvertinti, kaip jaučiatės ŠIANDIEN."
 ,
-  "weeklyWarning": "Atkreipkite dėmesį: šis klausimynas skirtas įvertinti jūsų būklę per PRAĖJUSIĄ SAVAITĘ."
+  "weeklyWarning": "Atkreipkite dėmesį: šis klausimynas skirtas įvertinti jūsų būklę per PRAĖJUSIĄ SAVAITĘ.",
+  "emailOptional": "El. paštas (Nebūtina)",
+  "emailAddress": "El. paštas",
+  "agreeToTerms": "Sutinku su Naudojimosi sąlygomis ir Privatumo politika",
+  "agreeToPromos": "Sutinku gauti reklaminius el. laiškus (Nebūtina)",
+  "logIn": "Prisijungti"
 }
