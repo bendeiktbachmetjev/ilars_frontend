@@ -19,9 +19,9 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
   String nightStools = 'No';
   String leakage = 'None';
   String incompleteEvac = 'No';
-  double bloating = 0;
-  double impactScore = 0;
-  double activityInterfere = 0;
+  int bloating = 0;
+  int impactScore = 0;
+  int activityInterfere = 0;
   int bristolScale = 1;
   
   // Variables for food and drink consumption
@@ -32,6 +32,7 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
   final TextStyle optionStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
   final Color selectedColor = Colors.black;
   final Color unselectedColor = Color(0xFFE0E0E0);
+  final Color activeColor = Colors.black;
 
   Widget _buildCounter({
     required int value,
@@ -131,12 +132,13 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
   Widget _buildSlider({
     required String label,
     required double value,
+    required int max,
     required void Function(double) onChanged,
   }) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: labelStyle, textAlign: TextAlign.center),
+        Text(label, style: labelStyle),
         Row(
           children: [
             const Text('0', style: TextStyle(fontSize: 14)),
@@ -144,13 +146,15 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
               child: Slider(
                 value: value,
                 min: 0,
-                max: 10,
-                divisions: 10,
+                max: max.toDouble(),
+                divisions: max,
                 label: value.round().toString(),
                 onChanged: onChanged,
+                activeColor: activeColor,
+                thumbColor: activeColor,
               ),
             ),
-            const Text('10', style: TextStyle(fontSize: 14)),
+            Text('$max', style: const TextStyle(fontSize: 14)),
           ],
         ),
       ],
@@ -177,6 +181,33 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
               Expanded(
                 child: ListView(
                   children: [
+                    // Warning section
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        border: Border.all(color: Colors.red.shade200),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(context)!.dailyWarning,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     // Stool/day & Pads Used
                     Row(
                       children: [
@@ -351,15 +382,23 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
                     // Bloating
                     _buildSlider(
                       label: AppLocalizations.of(context)!.bloating,
-                      value: bloating,
-                      onChanged: (v) => setState(() => bloating = v),
+                      value: bloating.toDouble(),
+                      max: 10,
+                      onChanged: (v) => setState(() => bloating = v.round()),
                     ),
-                    const SizedBox(height: 20),
-                    // Impact on life
+                    const SizedBox(height: 24),
                     _buildSlider(
-                      label: AppLocalizations.of(context)!.impactOnLife,
-                      value: impactScore,
-                      onChanged: (v) => setState(() => impactScore = v),
+                      label: AppLocalizations.of(context)!.dailyImpactScore,
+                      value: impactScore.toDouble(),
+                      max: 10,
+                      onChanged: (v) => setState(() => impactScore = v.round()),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildSlider(
+                      label: AppLocalizations.of(context)!.activityInterference,
+                      value: activityInterfere.toDouble(),
+                      max: 10,
+                      onChanged: (v) => setState(() => activityInterfere = v.round()),
                     ),
                     const SizedBox(height: 20),
                     // Drink consumption

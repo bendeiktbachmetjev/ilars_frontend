@@ -542,4 +542,12 @@ class AppLocalizationsLt extends AppLocalizations {
   @override
   String get privacyPolicyComingSoon =>
       'Netrukus: čia bus pateiktas Privatumo politikos turinys.';
+
+  @override
+  String get dailyWarning =>
+      'Atkreipkite dėmesį: šis klausimynas skirtas įvertinti, kaip jaučiatės ŠIANDIEN.';
+
+  @override
+  String get weeklyWarning =>
+      'Atkreipkite dėmesį: šis klausimynas skirtas įvertinti jūsų būklę per PRAĖJUSIĄ SAVAITĘ.';
 }

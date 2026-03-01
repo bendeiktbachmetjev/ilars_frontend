@@ -1,91 +1,119 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'api_service.dart';
 
 /// Reads daily step counts from Apple Health / Health Connect
 /// and sends them to the backend.
+///
+/// Sync range is determined by the backend (GET /getStepsSyncInfo),
+/// so there is no local cache to manage.
 class StepTrackingService {
   StepTrackingService._();
   static final StepTrackingService instance = StepTrackingService._();
 
-  static const _lastSyncKey = 'steps_last_sync';
   final _health = Health();
   bool _authorized = false;
 
-  /// Request permission to read step data.
-  /// Returns true if granted.
   Future<bool> requestPermission() async {
     final types = [HealthDataType.STEPS];
     final permissions = [HealthDataAccess.READ];
 
     try {
+      debugPrint('[Steps] Requesting HealthKit authorization...');
       final ok = await _health.requestAuthorization(types, permissions: permissions);
       _authorized = ok;
+      debugPrint('[Steps] Authorization result: $ok');
       return ok;
     } catch (e) {
+      debugPrint('[Steps] Authorization error: $e');
       _authorized = false;
       return false;
     }
   }
 
-  /// Fetch steps for the last [days] and send them to the API.
-  /// Skips dates already synced (tracks via SharedPreferences).
-  Future<void> syncSteps({int days = 7}) async {
+  /// Sync steps from the backend-determined start date up to yesterday.
+  Future<void> syncSteps() async {
+    debugPrint('[Steps] syncSteps called (authorized=$_authorized)');
+
     if (!_authorized) {
       final ok = await requestPermission();
-      if (!ok) return;
+      if (!ok) {
+        debugPrint('[Steps] Not authorized — aborting sync');
+        return;
+      }
     }
 
     final api = ApiService();
     final patientCode = await api.getPatientCode();
-    if (patientCode == null || patientCode.isEmpty) return;
+    if (patientCode == null || patientCode.isEmpty) {
+      debugPrint('[Steps] No patient code — aborting sync');
+      return;
+    }
+    debugPrint('[Steps] Patient code: $patientCode');
+
+    // Ask backend for the start date
+    final DateTime startDate;
+    try {
+      final syncInfo = await api.getStepsSyncInfo(patientCode: patientCode);
+      final raw = syncInfo['start_date'] as String?;
+      if (raw == null) {
+        debugPrint('[Steps] Backend returned no start_date — aborting');
+        return;
+      }
+      startDate = DateTime.parse(raw);
+      debugPrint('[Steps] Backend says sync from: $raw');
+    } catch (e) {
+      debugPrint('[Steps] Failed to get sync info: $e');
+      return;
+    }
 
     final now = DateTime.now();
-    final start = DateTime(now.year, now.month, now.day).subtract(Duration(days: days));
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
 
-    final prefs = await SharedPreferences.getInstance();
-    final lastSync = prefs.getString(_lastSyncKey);
-    final lastSyncDate = lastSync != null ? DateTime.tryParse(lastSync) : null;
+    if (!startDate.isBefore(today)) {
+      debugPrint('[Steps] Already up to date (start=$startDate >= today=$today)');
+      return;
+    }
+
+    debugPrint('[Steps] Range: $startDate → $yesterday');
 
     final entries = <Map<String, dynamic>>[];
+    var current = startDate;
 
-    for (var i = 0; i < days; i++) {
-      final dayStart = DateTime(start.year, start.month, start.day + i);
-      final dayEnd = dayStart.add(const Duration(days: 1)).subtract(const Duration(milliseconds: 1));
-
-      // Skip already-synced full days (but always re-sync today)
-      final isToday = dayStart.year == now.year &&
-          dayStart.month == now.month &&
-          dayStart.day == now.day;
-      if (!isToday && lastSyncDate != null && dayStart.isBefore(lastSyncDate)) {
-        continue;
-      }
+    while (!current.isAfter(yesterday)) {
+      final dayEnd = current.add(const Duration(days: 1)).subtract(const Duration(milliseconds: 1));
 
       try {
-        final totalSteps = await _health.getTotalStepsInInterval(dayStart, dayEnd);
+        final totalSteps = await _health.getTotalStepsInInterval(current, dayEnd);
+        debugPrint('[Steps] $current → $totalSteps steps');
         if (totalSteps != null && totalSteps > 0) {
           final dateStr =
-              '${dayStart.year}-${dayStart.month.toString().padLeft(2, '0')}-${dayStart.day.toString().padLeft(2, '0')}';
+              '${current.year}-${current.month.toString().padLeft(2, '0')}-${current.day.toString().padLeft(2, '0')}';
           entries.add({
             'step_date': dateStr,
             'step_count': totalSteps,
-            'source': Platform.isIOS ? 'apple_health' : 'health_connect',
           });
         }
-      } catch (_) {
-        // Individual day failure is non-critical
+      } catch (e) {
+        debugPrint('[Steps] Error reading day $current: $e');
       }
+
+      current = current.add(const Duration(days: 1));
     }
 
-    if (entries.isEmpty) return;
+    debugPrint('[Steps] Collected ${entries.length} day(s) with step data');
+    if (entries.isEmpty) {
+      debugPrint('[Steps] No step data to send — done');
+      return;
+    }
 
     try {
-      await api.sendSteps(patientCode: patientCode, steps: entries);
-      await prefs.setString(
-          _lastSyncKey, DateTime(now.year, now.month, now.day).toIso8601String());
-    } catch (_) {
-      // Network failure — will retry next time
+      debugPrint('[Steps] Sending ${entries.length} entries to backend...');
+      final response = await api.sendSteps(patientCode: patientCode, steps: entries);
+      debugPrint('[Steps] Backend response: ${response.statusCode} ${response.body}');
+    } catch (e) {
+      debugPrint('[Steps] Send error: $e');
     }
   }
 }

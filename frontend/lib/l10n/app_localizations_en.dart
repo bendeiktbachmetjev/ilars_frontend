@@ -535,4 +535,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get privacyPolicyComingSoon =>
       'Coming soon: Privacy Policy content will appear here.';
+
+  @override
+  String get dailyWarning =>
+      'Please note: this questionnaire refers to how you feel TODAY.';
+
+  @override
+  String get weeklyWarning =>
+      'Please note: this questionnaire refers to your condition over the PAST WEEK.';
 }

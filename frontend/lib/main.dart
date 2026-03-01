@@ -22,13 +22,16 @@ void main() async {
 
 Future<void> _initStepTracking() async {
   try {
+    debugPrint('[Steps] _initStepTracking started');
     final stepService = StepTrackingService.instance;
     final granted = await stepService.requestPermission();
+    debugPrint('[Steps] Permission granted: $granted');
     if (granted) {
-      await stepService.syncSteps(days: 7);
+      await stepService.syncSteps();
     }
-  } catch (_) {
-    // Non-critical — app works without step data
+    debugPrint('[Steps] _initStepTracking finished');
+  } catch (e) {
+    debugPrint('[Steps] _initStepTracking error: $e');
   }
 }
 
@@ -99,7 +102,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _scheduleNotification();
-      StepTrackingService.instance.syncSteps(days: 3);
+      StepTrackingService.instance.syncSteps();
     }
   }
 
@@ -140,7 +143,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     await notificationService.scheduleDailyNotification(
       title: l10n.notificationTitle,
       body: l10n.notificationBody,
-      shouldRemind: _shouldRemindToday,
+      shouldRemind: _shouldRemindToday(),
     );
   }
 

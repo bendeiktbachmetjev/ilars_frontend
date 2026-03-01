@@ -1063,6 +1063,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coming soon: Privacy Policy content will appear here.'**
   String get privacyPolicyComingSoon;
+
+  /// No description provided for @dailyWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Please note: this questionnaire refers to how you feel TODAY.'**
+  String get dailyWarning;
+
+  /// No description provided for @weeklyWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Please note: this questionnaire refers to your condition over the PAST WEEK.'**
+  String get weeklyWarning;
 }
 
 class _AppLocalizationsDelegate

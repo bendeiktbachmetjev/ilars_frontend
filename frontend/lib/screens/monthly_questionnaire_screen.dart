@@ -10,13 +10,13 @@ class MonthlyQuestionnaireScreen extends StatefulWidget {
 }
 
 class _MonthlyQuestionnaireScreenState extends State<MonthlyQuestionnaireScreen> {
-  double avoidTravel = 1;
-  double avoidSocial = 1;
-  double embarrassed = 1;
-  double worryNotice = 1;
-  double depressed = 1;
-  double control = 0;
-  double satisfaction = 0;
+  int avoidTravel = 1;
+  int avoidSocial = 1;
+  int embarrassed = 1;
+  int worryNotice = 1;
+  int depressed = 1;
+  int control = 0;
+  int satisfaction = 0;
 
   final TextStyle labelStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
   final Color activeColor = Colors.black;
@@ -75,58 +75,58 @@ class _MonthlyQuestionnaireScreenState extends State<MonthlyQuestionnaireScreen>
                     const SizedBox(height: 12),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.avoidTraveling,
-                      value: avoidTravel,
+                      value: avoidTravel.toDouble(),
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => avoidTravel = v),
+                      onChanged: (v) => setState(() => avoidTravel = v.round()),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.avoidSocialActivities,
-                      value: avoidSocial,
+                      value: avoidSocial.toDouble(),
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => avoidSocial = v),
+                      onChanged: (v) => setState(() => avoidSocial = v.round()),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.feelEmbarrassed,
-                      value: embarrassed,
+                      value: embarrassed.toDouble(),
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => embarrassed = v),
+                      onChanged: (v) => setState(() => embarrassed = v.round()),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.worryOthersNotice,
-                      value: worryNotice,
+                      value: worryNotice.toDouble(),
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => worryNotice = v),
+                      onChanged: (v) => setState(() => worryNotice = v.round()),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.feelDepressed,
-                      value: depressed,
+                      value: depressed.toDouble(),
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => depressed = v),
+                      onChanged: (v) => setState(() => depressed = v.round()),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.feelInControl,
-                      value: control,
+                      value: control.toDouble(),
                       min: 0,
                       max: 10,
-                      onChanged: (v) => setState(() => control = v),
+                      onChanged: (v) => setState(() => control = v.round()),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.overallSatisfaction,
-                      value: satisfaction,
+                      value: satisfaction.toDouble(),
                       min: 0,
                       max: 10,
-                      onChanged: (v) => setState(() => satisfaction = v),
+                      onChanged: (v) => setState(() => satisfaction = v.round()),
                     ),
                   ],
                 ),

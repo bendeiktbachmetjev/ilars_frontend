@@ -663,5 +663,9 @@
   "@termsOfUseComingSoon": {"description": "Placeholder text for Terms of Use"},
   "privacyPolicyComingSoon": "Coming soon: Privacy Policy content will appear here.",
   "@privacyPolicyComingSoon": {"description": "Placeholder text for Privacy Policy"}
+,
+  "dailyWarning": "Please note: this questionnaire refers to how you feel TODAY."
+,
+  "weeklyWarning": "Please note: this questionnaire refers to your condition over the PAST WEEK."
 }
 

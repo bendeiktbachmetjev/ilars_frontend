@@ -102,7 +102,33 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
               Expanded(
                 child: ListView(
                   children: [
-                    const SizedBox(height: 12),
+                    // Warning section
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        border: Border.all(color: Colors.red.shade200),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(context)!.weeklyWarning,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Text(AppLocalizations.of(context)!.flatusControlQuestion, style: labelStyle),
                     const SizedBox(height: 8),
                     _buildSelector(

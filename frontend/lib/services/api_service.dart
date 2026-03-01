@@ -153,6 +153,19 @@ class ApiService {
     return http.post(uri, headers: _headers(patientCode), body: body);
   }
 
+  /// Returns the date from which the client should start syncing steps.
+  Future<Map<String, dynamic>> getStepsSyncInfo({
+    required String patientCode,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/getStepsSyncInfo');
+    final response = await http.get(uri, headers: _headers(patientCode));
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } else {
+      throw Exception('Server error: ${response.statusCode}');
+    }
+  }
+
   Future<Map<String, dynamic>> getNextQuestionnaire({
     required String patientCode,
   }) async {
