@@ -202,28 +202,29 @@ class DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
             ] else if (_errorMessage != null) ...[
-              Row(
-                children: [
-                  Icon(Icons.error_outline, color: Colors.red[700], size: 28),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _errorMessage == 'patient_code_not_set'
-                          ? AppLocalizations.of(context)!.pleaseSetPatientCode
-                          : _errorMessage == 'failed_to_load'
-                              ? AppLocalizations.of(context)!.failedToLoadQuestionnaireInfo
-                              : _errorMessage!.startsWith('error_prefix:')
-                                  ? AppLocalizations.of(context)!.error(_errorMessage!.substring('error_prefix:'.length))
-                                  : _errorMessage!,
-                      style: TextStyle(
-                        color: Colors.red[700],
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
+              if (_errorMessage == 'patient_code_not_set')
+                _InlineLoginForm(onLoginSuccess: refreshAllData)
+              else
+                Row(
+                  children: [
+                    Icon(Icons.error_outline, color: Colors.red[700], size: 28),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _errorMessage == 'failed_to_load'
+                            ? AppLocalizations.of(context)!.failedToLoadQuestionnaireInfo
+                            : _errorMessage!.startsWith('error_prefix:')
+                                ? AppLocalizations.of(context)!.error(_errorMessage!.substring('error_prefix:'.length))
+                                : _errorMessage!,
+                        style: TextStyle(
+                          color: Colors.red[700],
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               // Removed Retry button - getNextQuestionnaire is only called:
               // 1. On app open (initState)
               // 2. On Save patient code (refreshAllData)
@@ -356,4 +357,178 @@ class _StatisticsSectionState extends State<StatisticsSection> {
       ],
     );
   }
-} 
+}
+
+class _InlineLoginForm extends StatefulWidget {
+  final VoidCallback onLoginSuccess;
+  
+  const _InlineLoginForm({required this.onLoginSuccess, super.key});
+
+  @override
+  State<_InlineLoginForm> createState() => _InlineLoginFormState();
+}
+
+class _InlineLoginFormState extends State<_InlineLoginForm> {
+  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  
+  bool _agreedToTerms = false;
+  bool _agreedToPromos = false;
+  bool _isSubmitting = false;
+
+  Future<void> _submit() async {
+    final code = _codeController.text.trim();
+    if (code.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.error('Please enter a patient code'))),
+      );
+      return;
+    }
+    
+    if (!_agreedToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.error('You must agree to the Terms of Use and Privacy Policy to continue'))),
+      );
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final api = ApiService();
+      
+      // 1. Validate the code
+      final validateResponse = await api.validatePatientCode(patientCode: code);
+      if (validateResponse['status'] != 'ok') {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(validateResponse['detail'] != null 
+                ? 'Error: ${validateResponse['detail']}' 
+                : 'Invalid patient code'),
+            backgroundColor: Colors.red[700],
+          ),
+        );
+        setState(() {
+          _isSubmitting = false;
+        });
+        return;
+      }
+      
+      // 2. Update the profile with email and consents
+      final email = _emailController.text.trim();
+      await api.updatePatientProfile(
+        patientCode: code,
+        email: email.isEmpty ? null : email,
+        agreedToTerms: _agreedToTerms,
+        agreedToPromos: _agreedToPromos,
+      );
+      
+      // 3. Save the code locally
+      await api.savePatientCode(code);
+      
+      // 4. Trigger dashboard reload
+      widget.onLoginSuccess();
+      
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed: ${e.toString()}'),
+          backgroundColor: Colors.red[700],
+        ),
+      );
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.pleaseSetPatientCode,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _codeController,
+            decoration: InputDecoration(
+              hintText: l10n.enterYourCode,
+              border: const OutlineInputBorder(),
+              labelText: l10n.patientCode,
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              hintText: 'Email (Optional)',
+              border: OutlineInputBorder(),
+              labelText: 'Email Address',
+            ),
+          ),
+          const SizedBox(height: 16),
+          CheckboxListTile(
+            title: const Text('I agree to the Terms of Use and Privacy Policy', style: TextStyle(fontSize: 14)),
+            value: _agreedToTerms,
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: (bool? value) {
+              setState(() {
+                _agreedToTerms = value ?? false;
+              });
+            },
+          ),
+          CheckboxListTile(
+            title: const Text('I agree to receive promotional emails (Optional)', style: TextStyle(fontSize: 14)),
+            value: _agreedToPromos,
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: (bool? value) {
+              setState(() {
+                _agreedToPromos = value ?? false;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _isSubmitting ? null : _submit,
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            child: _isSubmitting
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('Log In', style: TextStyle(fontSize: 16)),
+          ),
+        ],
+      ),
+    );
+  }
+}
