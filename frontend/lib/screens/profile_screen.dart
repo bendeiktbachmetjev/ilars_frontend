@@ -35,18 +35,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _save() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) return;
-    await ApiService().savePatientCode(code);
-    await _load();
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.patientCodeSaved)),
-    );
-    // Always refresh dashboard after saving patient code
-    // This ensures chart and questionnaire data are updated with latest data from server
-    // Add small delay to ensure SharedPreferences is fully updated
-    await Future.delayed(const Duration(milliseconds: 100));
-    if (widget.onPatientCodeChanged != null) {
-      widget.onPatientCodeChanged!();
+    
+    setState(() {
+      _loading = true;
+    });
+
+    try {
+      final api = ApiService();
+      final response = await api.validatePatientCode(patientCode: code);
+      if (response['status'] != 'ok') {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response['detail'] != null 
+                ? 'Error: ${response['detail']}' 
+                : 'Invalid patient code'),
+            backgroundColor: Colors.red[700],
+          ),
+        );
+        setState(() {
+          _loading = false;
+        });
+        return;
+      }
+      
+      await api.savePatientCode(code);
+      await _load();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.patientCodeSaved)),
+      );
+      // Always refresh dashboard after saving patient code
+      // This ensures chart and questionnaire data are updated with latest data from server
+      // Add small delay to ensure SharedPreferences is fully updated
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (widget.onPatientCodeChanged != null) {
+        widget.onPatientCodeChanged!();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Verification failed: ${e.toString()}'),
+          backgroundColor: Colors.red[700],
+        ),
+      );
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
