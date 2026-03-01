@@ -183,28 +183,29 @@ class DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            StatisticsSection(key: _statisticsKey),
-            const SizedBox(height: 32),
-            Text(
-              AppLocalizations.of(context)!.todaysQuestionnaire,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.left,
-            ),
-            const SizedBox(height: 16),
-            if (_isLoadingQuestionnaire) ...[
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CircularProgressIndicator(),
+            if (_errorMessage == 'patient_code_not_set') ...[
+              const SizedBox(height: 32),
+              _InlineLoginForm(onLoginSuccess: refreshAllData),
+            ] else ...[
+              StatisticsSection(key: _statisticsKey),
+              const SizedBox(height: 32),
+              Text(
+                AppLocalizations.of(context)!.todaysQuestionnaire,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.left,
               ),
-            ] else if (_errorMessage != null) ...[
-              if (_errorMessage == 'patient_code_not_set')
-                _InlineLoginForm(onLoginSuccess: refreshAllData)
-              else
+              const SizedBox(height: 16),
+              if (_isLoadingQuestionnaire) ...[
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ] else if (_errorMessage != null) ...[
                 Row(
                   children: [
                     Icon(Icons.error_outline, color: Colors.red[700], size: 28),
