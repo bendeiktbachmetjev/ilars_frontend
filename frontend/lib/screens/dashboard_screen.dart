@@ -11,9 +11,14 @@ import '../l10n/app_localizations.dart';
 import '../widgets/lars_line_chart.dart' show LarsLineChartState;
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key, this.onQuestionnaireSubmitted});
+  const DashboardScreen({
+    super.key,
+    this.onQuestionnaireSubmitted,
+    this.onPatientCodeChanged,
+  });
 
   final VoidCallback? onQuestionnaireSubmitted;
+  final VoidCallback? onPatientCodeChanged;
 
   @override
   State<DashboardScreen> createState() => DashboardScreenState();
@@ -42,7 +47,6 @@ class DashboardScreenState extends State<DashboardScreen> {
     _lastKnownPatientCode = await api.getPatientCode();
   }
 
-  // Public method to refresh all data (called when patient code changes)
   Future<void> refreshAllData() async {
     // Reset loading flag to allow new request
     _isLoadingQuestionnaireInProgress = false;
@@ -54,6 +58,9 @@ class DashboardScreenState extends State<DashboardScreen> {
     // Update last known patient code
     final api = ApiService();
     _lastKnownPatientCode = await api.getPatientCode();
+    
+    // Notify parent to sync profile
+    widget.onPatientCodeChanged?.call();
   }
 
   Future<void> _loadNextQuestionnaire() async {

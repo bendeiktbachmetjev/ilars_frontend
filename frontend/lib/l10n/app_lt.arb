@@ -169,5 +169,7 @@
   "emailAddress": "El. paštas",
   "agreeToTerms": "Sutinku su Naudojimosi sąlygomis ir Privatumo politika",
   "agreeToPromos": "Sutinku gauti reklaminius el. laiškus (Nebūtina)",
-  "logIn": "Prisijungti"
+  "logIn": "Prisijungti",
+  "unsubscribePromos": "Atsisakyti reklaminių el. laiškų",
+  "unsubscribed": "Sėkmingai atsisakyta"
 }

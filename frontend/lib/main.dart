@@ -73,18 +73,27 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   final GlobalKey<DashboardScreenState> _dashboardKey = GlobalKey<DashboardScreenState>();
+  final GlobalKey<ProfileScreenState> _profileKey = GlobalKey<ProfileScreenState>();
 
   late final List<Widget> _screens = [
     DashboardScreen(
       key: _dashboardKey,
       onQuestionnaireSubmitted: () => _scheduleNotification(),
+      onPatientCodeChanged: _refreshProfile,
     ),
-    ProfileScreen(onPatientCodeChanged: _refreshDashboard),
+    ProfileScreen(
+      key: _profileKey,
+      onPatientCodeChanged: _refreshDashboard,
+    ),
   ];
 
   // Method to refresh dashboard when patient code changes
   void _refreshDashboard() {
     _dashboardKey.currentState?.refreshAllData();
+  }
+
+  void _refreshProfile() {
+    _profileKey.currentState?.loadProfile();
   }
 
   @override

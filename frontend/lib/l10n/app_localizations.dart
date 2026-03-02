@@ -1107,6 +1107,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log In'**
   String get logIn;
+
+  /// Profile tab unsubscribe button
+  ///
+  /// In en, this message translates to:
+  /// **'Unsubscribe from promotional emails'**
+  String get unsubscribePromos;
+
+  /// Success message for unsubscribing
+  ///
+  /// In en, this message translates to:
+  /// **'Unsubscribed successfully'**
+  String get unsubscribed;
 }
 
 class _AppLocalizationsDelegate

@@ -676,6 +676,10 @@
   "agreeToPromos": "I agree to receive promotional emails (Optional)",
   "@agreeToPromos": {"description": "Optional promos checkbox"},
   "logIn": "Log In",
-  "@logIn": {"description": "Dashboard login button text"}
+  "@logIn": {"description": "Dashboard login button text"},
+  "unsubscribePromos": "Unsubscribe from promotional emails",
+  "@unsubscribePromos": {"description": "Profile tab unsubscribe button"},
+  "unsubscribed": "Unsubscribed successfully",
+  "@unsubscribed": {"description": "Success message for unsubscribing"}
 }
 

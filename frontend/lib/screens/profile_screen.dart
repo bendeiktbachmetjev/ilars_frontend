@@ -9,27 +9,74 @@ class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.onPatientCodeChanged});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _codeController = TextEditingController();
   String? _savedCode;
+  String? _email;
+  bool _agreedToPromos = false;
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _load();
+    loadProfile();
   }
 
-  Future<void> _load() async {
+  Future<void> loadProfile() async {
     final code = await ApiService().getPatientCode();
+    String? email;
+    bool promos = false;
+    
+    if (code != null && code.isNotEmpty) {
+      try {
+        final profile = await ApiService().getPatientProfile(patientCode: code);
+        if (profile['status'] == 'ok') {
+          email = profile['email'] as String?;
+          promos = profile['agreed_to_promos'] == true;
+        }
+      } catch (e) {
+        debugPrint('Failed to load profile: $e');
+      }
+    }
+
+    if (!mounted) return;
     setState(() {
       _savedCode = code;
+      _email = email;
+      _agreedToPromos = promos;
       _codeController.text = code ?? '';
       _loading = false;
     });
+  }
+
+  Future<void> _unsubscribe() async {
+    if (_savedCode == null) return;
+    
+    setState(() => _loading = true);
+    try {
+      final api = ApiService();
+      final response = await api.unsubscribePatient(patientCode: _savedCode!);
+      
+      if (response['status'] == 'ok') {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.unsubscribed)),
+        );
+        await loadProfile();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.red[700],
+        ),
+      );
+      setState(() => _loading = false);
+    }
   }
 
   Future<void> _save() async {
@@ -60,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
       
       await api.savePatientCode(code);
-      await _load();
+      await loadProfile();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context)!.patientCodeSaved)),
@@ -88,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _clear() async {
     await ApiService().clearPatientCode();
-    await _load();
+    await loadProfile();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(AppLocalizations.of(context)!.patientCodeCleared)),
@@ -155,6 +202,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
+                            if (_savedCode != null && (_email?.isNotEmpty == true || _agreedToPromos)) ...[
+                              const SizedBox(height: 16),
+                              const Divider(),
+                              const SizedBox(height: 16),
+                              if (_email?.isNotEmpty == true) ...[
+                                Text(
+                                  '${l10n.emailAddress}: $_email',
+                                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                              if (_agreedToPromos)
+                                TextButton.icon(
+                                  onPressed: _loading ? null : _unsubscribe,
+                                  icon: const Icon(Icons.unsubscribe, size: 18),
+                                  label: Text(l10n.unsubscribePromos),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red[700],
+                                    alignment: Alignment.centerLeft,
+                                    padding: EdgeInsets.zero,
+                                  ),
+                                ),
+                            ],
                           ],
                         ),
                       ),

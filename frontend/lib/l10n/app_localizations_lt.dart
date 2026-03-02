@@ -567,4 +567,10 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get logIn => 'Prisijungti';
+
+  @override
+  String get unsubscribePromos => 'Atsisakyti reklaminių el. laiškų';
+
+  @override
+  String get unsubscribed => 'Sėkmingai atsisakyta';
 }

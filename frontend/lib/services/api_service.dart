@@ -193,6 +193,46 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getPatientProfile({
+    required String patientCode,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/getPatientProfile');
+    try {
+      final response = await http.get(uri, headers: _headers(patientCode));
+      
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      if (e.toString().contains('Exception')) {
+        rethrow;
+      }
+      throw Exception('Network error: ${e.toString()}');
+    }
+  }
+  
+  Future<Map<String, dynamic>> unsubscribePatient({
+    required String patientCode,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/unsubscribePatient');
+    try {
+      final response = await http.post(uri, headers: _headers(patientCode));
+      
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      if (e.toString().contains('Exception')) {
+        rethrow;
+      }
+      throw Exception('Network error: ${e.toString()}');
+    }
+  }
+
   Future<http.Response> sendSteps({
     required String patientCode,
     required List<Map<String, dynamic>> steps,

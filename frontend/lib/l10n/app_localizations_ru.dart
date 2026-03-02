@@ -569,4 +569,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get logIn => 'Войти';
+
+  @override
+  String get unsubscribePromos => 'Отписаться от рекламных писем';
+
+  @override
+  String get unsubscribed => 'Подписка успешно отменена';
 }
