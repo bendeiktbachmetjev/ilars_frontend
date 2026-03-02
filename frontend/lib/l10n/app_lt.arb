@@ -171,5 +171,7 @@
   "agreeToPromos": "Sutinku gauti reklaminius el. laiškus (Nebūtina)",
   "logIn": "Prisijungti",
   "unsubscribePromos": "Atsisakyti reklaminių el. laiškų",
-  "unsubscribed": "Sėkmingai atsisakyta"
+  "subscribePromos": "Prenumeruoti reklaminius el. laiškus",
+  "unsubscribed": "Sėkmingai atsisakyta",
+  "subscribed": "Sėkmingai užsiprenumeruota"
 }

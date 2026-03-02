@@ -572,5 +572,11 @@ class AppLocalizationsLt extends AppLocalizations {
   String get unsubscribePromos => 'Atsisakyti reklaminių el. laiškų';
 
   @override
+  String get subscribePromos => 'Prenumeruoti reklaminius el. laiškus';
+
+  @override
   String get unsubscribed => 'Sėkmingai atsisakyta';
+
+  @override
+  String get subscribed => 'Sėkmingai užsiprenumeruota';
 }

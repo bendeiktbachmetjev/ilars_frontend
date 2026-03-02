@@ -14,6 +14,7 @@ class ProfileScreen extends StatefulWidget {
 
 class ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   String? _savedCode;
   String? _email;
   bool _agreedToPromos = false;
@@ -48,6 +49,7 @@ class ProfileScreenState extends State<ProfileScreen> {
       _email = email;
       _agreedToPromos = promos;
       _codeController.text = code ?? '';
+      _emailController.text = email ?? '';
       _loading = false;
     });
   }
@@ -64,6 +66,38 @@ class ProfileScreenState extends State<ProfileScreen> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.unsubscribed)),
+        );
+        await loadProfile();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+          backgroundColor: Colors.red[700],
+        ),
+      );
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _subscribe() async {
+    if (_savedCode == null) return;
+    final email = _emailController.text.trim();
+    if (email.isEmpty) return;
+    
+    setState(() => _loading = true);
+    try {
+      final api = ApiService();
+      final response = await api.subscribePatient(
+        patientCode: _savedCode!,
+        email: email,
+      );
+      
+      if (response['status'] == 'ok') {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.subscribed)),
         );
         await loadProfile();
       }
@@ -202,7 +236,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ],
                             ),
-                            if (_savedCode != null && (_email?.isNotEmpty == true || _agreedToPromos)) ...[
+                            if (_savedCode != null) ...[
                               const SizedBox(height: 16),
                               const Divider(),
                               const SizedBox(height: 16),
@@ -213,7 +247,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 const SizedBox(height: 8),
                               ],
-                              if (_agreedToPromos)
+                              if (_agreedToPromos) ...[
                                 TextButton.icon(
                                   onPressed: _loading ? null : _unsubscribe,
                                   icon: const Icon(Icons.unsubscribe, size: 18),
@@ -224,6 +258,30 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     padding: EdgeInsets.zero,
                                   ),
                                 ),
+                              ] else ...[
+                                Text(
+                                  l10n.subscribePromos,
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 8),
+                                TextField(
+                                  controller: _emailController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  decoration: InputDecoration(
+                                    hintText: l10n.emailAddress,
+                                    isDense: true,
+                                    border: const OutlineInputBorder(),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                ElevatedButton(
+                                  onPressed: _loading ? null : _subscribe,
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(double.infinity, 40),
+                                  ),
+                                  child: Text(l10n.subscribePromos),
+                                ),
+                              ],
                             ],
                           ],
                         ),

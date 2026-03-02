@@ -679,7 +679,11 @@
   "@logIn": {"description": "Dashboard login button text"},
   "unsubscribePromos": "Unsubscribe from promotional emails",
   "@unsubscribePromos": {"description": "Profile tab unsubscribe button"},
+  "subscribePromos": "Subscribe to promotional emails",
+  "@subscribePromos": {"description": "Profile tab subscribe button"},
   "unsubscribed": "Unsubscribed successfully",
-  "@unsubscribed": {"description": "Success message for unsubscribing"}
+  "@unsubscribed": {"description": "Success message for unsubscribing"},
+  "subscribed": "Subscribed successfully",
+  "@subscribed": {"description": "Success message for subscribing"}
 }
 

@@ -564,5 +564,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unsubscribePromos => 'Unsubscribe from promotional emails';
 
   @override
+  String get subscribePromos => 'Subscribe to promotional emails';
+
+  @override
   String get unsubscribed => 'Unsubscribed successfully';
+
+  @override
+  String get subscribed => 'Subscribed successfully';
 }

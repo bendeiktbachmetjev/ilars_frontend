@@ -233,6 +233,32 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> subscribePatient({
+    required String patientCode,
+    required String email,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/subscribePatient');
+    final body = jsonEncode({'email': email});
+    try {
+      final response = await http.post(
+        uri, 
+        headers: _headers(patientCode),
+        body: body,
+      );
+      
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      if (e.toString().contains('Exception')) {
+        rethrow;
+      }
+      throw Exception('Network error: ${e.toString()}');
+    }
+  }
+
   Future<http.Response> sendSteps({
     required String patientCode,
     required List<Map<String, dynamic>> steps,

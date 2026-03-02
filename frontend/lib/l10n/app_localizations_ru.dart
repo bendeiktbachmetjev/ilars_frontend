@@ -574,5 +574,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get unsubscribePromos => 'Отписаться от рекламных писем';
 
   @override
+  String get subscribePromos => 'Подписаться на рекламные письма';
+
+  @override
   String get unsubscribed => 'Подписка успешно отменена';
+
+  @override
+  String get subscribed => 'Подписка успешно оформлена';
 }
