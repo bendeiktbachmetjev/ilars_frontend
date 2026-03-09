@@ -1,7 +1,7 @@
 {
   "@@locale": "ru",
-  "appTitle": "ABBA Care",
-  "appName": "ABBA Care",
+  "appTitle": "ABBA LARS",
+  "appName": "ABBA LARS",
   "dashboard": "Дашборд",
   "profile": "Профиль",
   "statistics": "Статистика",
@@ -21,7 +21,7 @@
   "retry": "Повторить",
   "completeWeeklyQuestionnairesToSeeStatistics": "Заполняйте еженедельные опросники, чтобы увидеть статистику LARS",
   "completeMoreWeeklyQuestionnaires": "Заполняйте больше еженедельных опросников, чтобы увидеть тенденции",
-  "ilarsPatient": "Пациент ABBA Care",
+  "ilarsPatient": "Пациент ABBA LARS",
   "noPatientCode": "Код пациента не задан",
   "code": "Код: {code}",
   "patientCode": "Код пациента",

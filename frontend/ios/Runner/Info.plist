@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>ABBA Care</string>
+	<string>ABBA LARS</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -55,9 +55,9 @@
 		<string>remote-notification</string>
 	</array>
 	<key>NSHealthShareUsageDescription</key>
-	<string>ABBA Care reads your daily step count to help your doctor track your recovery progress.</string>
+	<string>ABBA LARS reads your daily step count to help your doctor track your recovery progress.</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>ABBA Care does not write health data.</string>
+	<string>ABBA LARS does not write health data.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>

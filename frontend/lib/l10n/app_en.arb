@@ -1,10 +1,10 @@
 {
   "@@locale": "en",
-  "appTitle": "ABBA Care",
+  "appTitle": "ABBA LARS",
   "@appTitle": {
     "description": "The application title"
   },
-  "appName": "ABBA Care",
+  "appName": "ABBA LARS",
   "@appName": {
     "description": "Application name for app store"
   },
@@ -84,7 +84,7 @@
   "@completeMoreWeeklyQuestionnaires": {
     "description": "Message when need more data for trends"
   },
-  "ilarsPatient": "ABBA Care Patient",
+  "ilarsPatient": "ABBA LARS Patient",
   "@ilarsPatient": {
     "description": "Patient profile title"
   },

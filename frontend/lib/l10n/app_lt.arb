@@ -1,7 +1,7 @@
 {
   "@@locale": "lt",
-  "appTitle": "ABBA Care",
-  "appName": "ABBA Care",
+  "appTitle": "ABBA LARS",
+  "appName": "ABBA LARS",
   "dashboard": "Suvestinė",
   "profile": "Profilis",
   "statistics": "Statistika",
@@ -21,7 +21,7 @@
   "retry": "Bandyti dar kartą",
   "completeWeeklyQuestionnairesToSeeStatistics": "Užbaikite savaitinius klausimynus, kad pamatytumėte savo LARS balo statistiką",
   "completeMoreWeeklyQuestionnaires": "Užbaikite daugiau savaitinių klausimynų, kad pamatytumėte LARS rodyklio tendencijas",
-  "ilarsPatient": "ABBA Care pacientas",
+  "ilarsPatient": "ABBA LARS pacientas",
   "noPatientCode": "Paciento kodo nėra",
   "code": "Kodas: {code}",
   "patientCode": "Paciento kodas",

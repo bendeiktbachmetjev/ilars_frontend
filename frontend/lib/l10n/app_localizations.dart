@@ -103,13 +103,13 @@ abstract class AppLocalizations {
   /// The application title
   ///
   /// In en, this message translates to:
-  /// **'ABBA Care'**
+  /// **'ABBA LARS'**
   String get appTitle;
 
   /// Application name for app store
   ///
   /// In en, this message translates to:
-  /// **'ABBA Care'**
+  /// **'ABBA LARS'**
   String get appName;
 
   /// Dashboard tab label
@@ -229,7 +229,7 @@ abstract class AppLocalizations {
   /// Patient profile title
   ///
   /// In en, this message translates to:
-  /// **'ABBA Care Patient'**
+  /// **'ABBA LARS Patient'**
   String get ilarsPatient;
 
   /// Message when no patient code is set

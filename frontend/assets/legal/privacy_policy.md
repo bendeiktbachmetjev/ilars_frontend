@@ -1,4 +1,4 @@
-Comprehensive Privacy Policy Template for your app (ABBA Care) that covers all of the following regions:
+Comprehensive Privacy Policy Template for your app (ABBA LARS) that covers all of the following regions:
 •	European Union (GDPR)
 •	United Kingdom (UK GDPR)
 •	United States (HIPAA, CCPA)
@@ -7,12 +7,12 @@ Comprehensive Privacy Policy Template for your app (ABBA Care) that covers all o
 •	Australia (Privacy Act 1988)
 •	New Zealand (Privacy Act 2020)
 •	Russia (Federal Law No. 152-FZ on Personal Data)
-Privacy Policy for ABBA Care
+Privacy Policy for ABBA LARS
 Effective Date: 2025-11-04
 Last Updated: 2025-11-04
 Controller/Provider: ABBA (“we”, “us”, “our”). If you are located in the EU/UK, the data controller is ABBA.
 The platform is developed and maintained by ABBA for clinical use. ABBA is the Data Controller and is fully responsible for data privacy and GDPR compliance. The hospital or clinic acts solely as a user of the platform.
-Welcome to ABBA Care, a mobile application designed to help individuals track bowel function and receive educational insights related to life after rectal cancer surgery, including symptoms associated with Low Anterior Resection Syndrome (LARS). This Privacy Policy explains how we collect, use, store, and protect your information, in accordance with privacy regulations across the globe, including but not limited to the EU, UK, USA, South Korea, Turkey, Russia, Australia, New Zealand, and other regions where ABBA Care may be used.
+Welcome to ABBA LARS, a mobile application designed to help individuals track bowel function and receive educational insights related to life after rectal cancer surgery, including symptoms associated with Low Anterior Resection Syndrome (LARS). This Privacy Policy explains how we collect, use, store, and protect your information, in accordance with privacy regulations across the globe, including but not limited to the EU, UK, USA, South Korea, Turkey, Russia, Australia, New Zealand, and other regions where ABBA LARS may be used.
  
 1. What Data We Collect
 We may collect and process the following types of data, exclusively with your explicit consent, and only to the extent necessary to deliver the core features of the application. No personally identifiable information (such as name, email, address, or phone number) is collected at any time. All data is stored under an automatically generated unique user code and remains pseudonymized. Pseudonymization means that your data is stored using a unique identifier instead of directly identifiable personal information (such as your name or email), and it cannot be linked to you without access to additional information that is kept separately and securely. This helps protect your identity and enhances your privacy while still allowing for meaningful use of the data for app functionality and care improvement.
@@ -35,11 +35,11 @@ o	Session frequency and version history
 •	Third-Party SDK/Analytics: We avoid tracking that profiles users. If we ever integrate crash/error or performance SDKs, they will be configured not to collect identifiers, and we will list them transparently in this Policy.
 This data may be used for personalized app feedback, clinic-led monitoring, aggregated analytics, and ongoing improvement of the app functionality, provided your consent remains valid and active.
 2. Why We Collect Your Data
-We collect and process your data exclusively with your explicit consent and solely for lawful, clearly defined purposes related to the use of the ABBA Care application. These purposes include:
+We collect and process your data exclusively with your explicit consent and solely for lawful, clearly defined purposes related to the use of the ABBA LARS application. These purposes include:
 •	To provide personalized and functional symptom tracking, including the generation of data visualizations, symptom logs, and symptom trend summaries over time
 •	To generate non-clinical, educational, AI and current guidelines driven suggestions aimed at supporting users’ self-management of LARS symptoms and related bowel function
 •	To develop clinical insights that may help improve care pathways or quality of life for individuals affected by LARS
-•	To refine, enhance, and expand ABBA Care’s features and functionality over time, including through aggregated usage analytics, user feedback, or technical diagnostics
+•	To refine, enhance, and expand ABBA LARS’s features and functionality over time, including through aggregated usage analytics, user feedback, or technical diagnostics
 •	To meet compliance obligations under applicable global data privacy laws and health information regulations
 •	To maintain secure and seamless application functionality across devices, sessions, and software updates, using a unique pseudonymized code
 •	To ensure quality control, assess performance, and improve the safety and reliability of educational guidance provided in-app
@@ -51,7 +51,7 @@ We process your data in accordance with globally recognized data privacy princip
 Where applicable, we also rely on legitimate interest, clinical monitoring purposes, public health considerations, and compliance with a legal obligation, as permitted by relevant laws.
 We comply with the following legal frameworks (among others):
 •	European Union (EU) / European Economic Area (EEA) / United Kingdom (UK): General Data Protection Regulation (GDPR) and UK GDPR, including Articles 6(1)(a) and 9(2)(a) for explicit consent regarding sensitive health data
-•	United States (USA): While ABBA Care is not itself a HIPAA-covered entity, we voluntarily adopt HIPAA-aligned safeguards to protect pseudonymized health data. We also comply with the California Consumer Privacy Act (CCPA) / California Privacy Rights Act (CPRA) regarding consumer rights and transparency.
+•	United States (USA): While ABBA LARS is not itself a HIPAA-covered entity, we voluntarily adopt HIPAA-aligned safeguards to protect pseudonymized health data. We also comply with the California Consumer Privacy Act (CCPA) / California Privacy Rights Act (CPRA) regarding consumer rights and transparency.
 •	South Korea: Personal Information Protection Act (PIPA), including localization, consent documentation, and user access rights
 •	Turkey: Law on the Protection of Personal Data (KVKK), requiring explicit consent for sensitive health data and transparency in processing practices
 •	Russia: Federal Law No. 152-FZ, requiring that personal data of Russian citizens be stored and processed on servers located within the Russian Federation
@@ -67,11 +67,11 @@ We respect your rights to data privacy and control, and we are committed to hono
 •	Right to Withdraw Consent – You may revoke your consent to data processing at any time. Withdrawing consent will limit your access to app functionality that depends on your data.
 •	Right to Data Portability – You may request an export of your data in a commonly used, machine-readable format that can be transferred to another system or retained for personal records.
 •	Right to Restriction of Processing – You may request that we temporarily or permanently restrict processing of your data under certain conditions.
-•	Right to Object to Processing – In jurisdictions that allow it, you may object to processing for specific purposes, such as direct marketing (though ABBA Care does not perform any marketing).
+•	Right to Object to Processing – In jurisdictions that allow it, you may object to processing for specific purposes, such as direct marketing (though ABBA LARS does not perform any marketing).
 •	Right to Lodge a Complaint – You may have the right to contact a supervisory authority or data protection regulator in your jurisdiction if you believe your rights have been infringed.
 To exercise any of these rights, please contact us using the information provided in the "Contact Us" section. We will respond in accordance with applicable laws and timelines relevant to your location.
 5. How We Protect Your Data
-We take data security and privacy seriously and implement robust technical, physical, and organizational safeguards to protect all data processed by ABBA Care. Our approach is aligned with international best practices, including GDPR security principles, HIPAA security standards (where applicable), and ISO/IEC 27001–aligned controls.
+We take data security and privacy seriously and implement robust technical, physical, and organizational safeguards to protect all data processed by ABBA LARS. Our approach is aligned with international best practices, including GDPR security principles, HIPAA security standards (where applicable), and ISO/IEC 27001–aligned controls.
 Security measures include:
 •	End-to-End Encryption – All data is encrypted in transit using TLS 1.3 or higher, securing it against unauthorized interception or access.
 •	Encryption at Rest – All data stored on our servers is encrypted using industry-standard AES-256 algorithms.
@@ -84,13 +84,13 @@ Security measures include:
 •	Internal Security Training & Audits – Our team receives regular data protection training and conducts internal audits to uphold privacy and security commitments.
 Despite these measures, no digital system can ever be guaranteed fully secure. Users are encouraged to safeguard their unique user code and report any suspected misuse or breach immediately via our Contact section.
 6. Cross-Border Data Transfers
-Given the global availability of the ABBA Care app, your data may be processed in, transferred to, or stored in jurisdictions outside your country of residence, including but not limited to the European Union, United States, South Korea, Turkey, Australia, Russia, New Zealand, and others. These transfers are necessary for the delivery, operation, and support of the app.
+Given the global availability of the ABBA LARS app, your data may be processed in, transferred to, or stored in jurisdictions outside your country of residence, including but not limited to the European Union, United States, South Korea, Turkey, Australia, Russia, New Zealand, and others. These transfers are necessary for the delivery, operation, and support of the app.
 To ensure the lawful and secure handling of your data, we implement appropriate safeguards in accordance with applicable international data protection laws. These may include:
 •	Standard Contractual Clauses (SCCs) issued by the European Commission or other approved mechanisms to ensure adequate protection when data is transferred internationally
 •	Explicit consent for cross-border transfers, where legally required (e.g., Turkey, South Korea)
-•	Data localization and residency practices where mandated by law (e.g., Russia – servers located in the Russian Federation for data belonging to Russian citizens). If full compliance with local residency laws is not feasible, ABBA Care reserves the right to restrict or discontinue availability in certain regions (e.g., Russia).
+•	Data localization and residency practices where mandated by law (e.g., Russia – servers located in the Russian Federation for data belonging to Russian citizens). If full compliance with local residency laws is not feasible, ABBA LARS reserves the right to restrict or discontinue availability in certain regions (e.g., Russia).
 •	Encrypted storage and pseudonymized identifiers to prevent personal re-identification in transit and at rest
-By using ABBA Care and consenting to this Privacy Policy, you acknowledge that your data may be transferred to and stored in jurisdictions with different or potentially less stringent privacy protections than your own. We remain committed to upholding high data protection standards globally.
+By using ABBA LARS and consenting to this Privacy Policy, you acknowledge that your data may be transferred to and stored in jurisdictions with different or potentially less stringent privacy protections than your own. We remain committed to upholding high data protection standards globally.
 7. Data Retention
 We retain your data only for as long as necessary to fulfill the purposes outlined in this Privacy Policy, or as required by applicable laws and ethical clinical guidelines.
 Retention terms include:
@@ -104,13 +104,13 @@ Your data is retained:
 •	Until you request deletion
 •	Anonymized data for clinical improvement may be retained indefinitely
 8. Disclaimers & Limitations
-ABBA Care is not a diagnostic tool, medical device, or clinical decision-support system as defined by medical device regulations or health authority guidelines in any jurisdiction. It does not provide medical advice, offer diagnosis, prescribe treatment, or replace professional medical consultation. All insights, symptom feedback, educational messages, and lifestyle suggestions presented within the app are for general informational and educational purposes only.
+ABBA LARS is not a diagnostic tool, medical device, or clinical decision-support system as defined by medical device regulations or health authority guidelines in any jurisdiction. It does not provide medical advice, offer diagnosis, prescribe treatment, or replace professional medical consultation. All insights, symptom feedback, educational messages, and lifestyle suggestions presented within the app are for general informational and educational purposes only.
 The content within the app is not intended to be used as a substitute for professional healthcare advice, diagnosis, or treatment. Users are solely responsible for how they interpret and apply the information presented. We strongly advise all users to consult with a licensed physician, specialist, or qualified healthcare provider before making any medical decisions, changes in medication, dietary adjustments, or health interventions based on content within the app.
 The app does not detect allergies, drug interactions, food intolerances, or adverse effects. Any dietary or lifestyle suggestions should be reviewed by your healthcare provider before implementation, especially if you have underlying medical conditions, food allergies, or are taking prescription medications.
-Use of ABBA Care does not establish any doctor-patient relationship or duty of care between the user and the developers, medical advisors, or operators of this application. The app is provided "as is," with no warranties or guarantees of any kind, either express or implied, regarding accuracy, completeness, medical benefit, or suitability for any particular purpose.
-By using the app, you acknowledge and agree that the developers, licensors, affiliates, and associated organizations are not liable for any injury, health outcome, loss, or damage arising directly or indirectly from the use of the app or reliance on its content. To the maximum extent permitted by law, any liability of ABBA Care shall not exceed the amount paid by the user for the app in the twelve (12) months preceding the claim (if any).
+Use of ABBA LARS does not establish any doctor-patient relationship or duty of care between the user and the developers, medical advisors, or operators of this application. The app is provided "as is," with no warranties or guarantees of any kind, either express or implied, regarding accuracy, completeness, medical benefit, or suitability for any particular purpose.
+By using the app, you acknowledge and agree that the developers, licensors, affiliates, and associated organizations are not liable for any injury, health outcome, loss, or damage arising directly or indirectly from the use of the app or reliance on its content. To the maximum extent permitted by law, any liability of ABBA LARS shall not exceed the amount paid by the user for the app in the twelve (12) months preceding the claim (if any).
 The content within the app is not intended to be used as a substitute for professional healthcare advice, diagnosis, or treatment. Users are solely responsible for how they interpret and apply the information presented. We strongly advise all users to consult with a licensed physician, specialist, or qualified healthcare provider before making any medical decisions, changes in medication, dietary adjustments, or health interventions based on content within the app.
-Use of ABBA Care does not establish any doctor-patient relationship or duty of care between the user and the developers, medical advisors, or operators of this application. The app is provided "as is," with no warranties or guarantees of any kind, either express or implied, regarding accuracy, completeness, medical benefit, or suitability for any particular purpose.
+Use of ABBA LARS does not establish any doctor-patient relationship or duty of care between the user and the developers, medical advisors, or operators of this application. The app is provided "as is," with no warranties or guarantees of any kind, either express or implied, regarding accuracy, completeness, medical benefit, or suitability for any particular purpose.
 By using the app, you acknowledge and agree that the developers, licensors, affiliates, and associated organizations are not liable for any injury, health outcome, loss, or damage arising directly or indirectly from the use of the app or reliance on its content.
 9. Contact Us
 Email: audrius.dulskas@nvc.santa.lt
