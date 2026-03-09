@@ -9,10 +9,10 @@ class AppLocalizationsLt extends AppLocalizations {
   AppLocalizationsLt([String locale = 'lt']) : super(locale);
 
   @override
-  String get appTitle => 'iLARS';
+  String get appTitle => 'ABBA Care';
 
   @override
-  String get appName => 'iLARS';
+  String get appName => 'ABBA Care';
 
   @override
   String get dashboard => 'Suvestinė';
@@ -77,7 +77,7 @@ class AppLocalizationsLt extends AppLocalizations {
       'Užbaikite daugiau savaitinių klausimynų, kad pamatytumėte LARS rodyklio tendencijas';
 
   @override
-  String get ilarsPatient => 'iLARS pacientas';
+  String get ilarsPatient => 'ABBA Care pacientas';
 
   @override
   String get noPatientCode => 'Paciento kodo nėra';
