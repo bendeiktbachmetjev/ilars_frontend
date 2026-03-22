@@ -15,24 +15,6 @@ void main() async {
   await notificationService.initialize();
   
   runApp(const MyApp());
-
-  // Background step sync (non-blocking)
-  _initStepTracking();
-}
-
-Future<void> _initStepTracking() async {
-  try {
-    debugPrint('[Steps] _initStepTracking started');
-    final stepService = StepTrackingService.instance;
-    final granted = await stepService.requestPermission();
-    debugPrint('[Steps] Permission granted: $granted');
-    if (granted) {
-      await stepService.syncSteps();
-    }
-    debugPrint('[Steps] _initStepTracking finished');
-  } catch (e) {
-    debugPrint('[Steps] _initStepTracking error: $e');
-  }
 }
 
 class MyApp extends StatelessWidget {
@@ -90,6 +72,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   // Method to refresh dashboard when patient code changes
   void _refreshDashboard() {
     _dashboardKey.currentState?.refreshAllData();
+    // Fire-and-forget sync once patient code exists.
+    // ignore: unawaited_futures
+    StepTrackingService.instance.syncSteps();
   }
 
   void _refreshProfile() {

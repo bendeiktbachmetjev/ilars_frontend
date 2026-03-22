@@ -35,6 +35,15 @@ class StepTrackingService {
   Future<void> syncSteps() async {
     debugPrint('[Steps] syncSteps called (authorized=$_authorized)');
 
+    final api = ApiService();
+    final patientCode = await api.getPatientCode();
+    if (patientCode == null || patientCode.isEmpty) {
+      debugPrint('[Steps] No patient code — aborting sync');
+      return;
+    }
+
+    // Only request Health Connect permission when we know we can actually use the data
+    // (i.e. patientCode exists). This keeps the permission flow aligned with app functionality.
     if (!_authorized) {
       final ok = await requestPermission();
       if (!ok) {
@@ -43,12 +52,6 @@ class StepTrackingService {
       }
     }
 
-    final api = ApiService();
-    final patientCode = await api.getPatientCode();
-    if (patientCode == null || patientCode.isEmpty) {
-      debugPrint('[Steps] No patient code — aborting sync');
-      return;
-    }
     debugPrint('[Steps] Patient code: $patientCode');
 
     // Ask backend for the start date

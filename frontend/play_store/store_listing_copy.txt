@@ -1,0 +1,43 @@
+# Play Store — Main store listing (copy-paste)
+
+## App name (max 30 characters)
+ABBA LARS
+
+## Short description (max 80 characters)
+Track bowel function and recovery after rectal surgery. For patients and clinicians.
+
+## Full description (max 4000 characters)
+
+ABBA LARS — Post-Surgical Recovery Tracker
+
+ABBA LARS is a specialized clinical tool designed to help patients monitor their health and functional recovery following surgery (Lower Anterior Resection). Created for use within partner healthcare institutions, the app provides a seamless way for patients to track their symptoms and share objective recovery data with their medical team.
+
+KEY FEATURES
+
+Daily Symptom Tracking — Easily record your daily condition, including bowel habits and physical well-being. Log frequency, consistency, urgency, and other bowel-related symptoms using validated scales such as the Bristol Stool Form Scale. The app helps you keep a clear picture of how you feel day by day.
+
+Validated Questionnaires — Complete weekly LARS (Low Anterior Resection Syndrome) scores and monthly Quality of Life (QoL) assessments, including the EQ-5D-5L questionnaire when prompted. These standardized tools allow your doctor to monitor your progress over time and tailor follow-up care to your needs.
+
+Activity Monitoring — Automatically sync your aggregated daily step count with the app (via Health Connect or Google Fit) to provide your doctor with objective data on your activity levels during recovery. Optional and permission-based: you enable it in-app after setting your patient code, and we only read step counts (no names/emails are collected).
+
+Clinic Integration — Your health data is securely shared with your treating physician, enabling more personalized follow-up care and better-informed medical consultations. Data is linked only to your unique patient code; no names, emails, or other identifiers are stored in the app.
+
+Simple & Private Access — Access the app using a unique patient code provided by your hospital. No complex registration or lengthy setup is required. Your data is pseudonymized and stored securely. You can use the same code on another device to keep your history in one place.
+
+FOR PATIENTS
+
+If you have undergone Lower Anterior Resection surgery and are under the care of a participating clinic, ABBA LARS helps you track bowel function, symptoms, and quality of life in one place. Enter the patient code given to you by your healthcare provider to open your dashboard. You can view simple charts of your symptom trends and read educational content about diet, lifestyle, and life after surgery.
+
+FOR CLINICIANS AND HOSPITALS
+
+The app supports remote monitoring of bowel function and quality of life. Clinics can use the platform to follow patient progress between visits and offer more data-driven, personalized care. Data is linked to the patient code only; no personally identifiable information is collected in the app.
+
+PRIVACY & SAFETY
+
+We do not collect your name, email address, or phone number. All data is tied to your anonymous patient code. We do not sell or share your data for advertising or marketing. For full details, see our Privacy Policy (link in the app and on this store listing).
+
+IMPORTANT NOTE
+
+ABBA LARS is intended for use by patients of participating hospitals. Please consult with your healthcare provider to receive your unique access code. This app is for informational and educational use only. It is not a medical device and does not replace professional medical advice, diagnosis, or treatment. Always follow your healthcare provider’s guidance for your recovery and any medical decisions.
+
+Supported languages: English, Lithuanian, Russian.
