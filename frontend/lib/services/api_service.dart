@@ -281,6 +281,30 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getStepsChartData({
+    required String patientCode,
+    required String period, // "weekly", "monthly", or "yearly"
+  }) async {
+    final uri = Uri.parse('$_baseUrl/getStepsChartData?period=$period');
+    try {
+      final response = await http.get(uri, headers: _headers(patientCode));
+      
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+        // Return even if data array is empty - that's valid (no data yet)
+        return decoded;
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Re-throw with more context, but don't fail if it's a network issue
+      if (e.toString().contains('Exception')) {
+        rethrow;
+      }
+      throw Exception('Network error: ${e.toString()}');
+    }
+  }
+
   Future<Map<String, dynamic>> getNextQuestionnaire({
     required String patientCode,
   }) async {

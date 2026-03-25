@@ -2,26 +2,25 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
-/// Enum for different time periods
 enum TimePeriod { weekly, monthly, yearly }
 
-/// Widget that displays a LARS score line chart with period selection.
 class LarsLineChart extends StatefulWidget {
-  // onPeriodChanged callback removed - chart manages period internally
   const LarsLineChart({super.key});
 
   @override
   State<LarsLineChart> createState() => LarsLineChartState();
 }
 
-/// Public state class for LarsLineChart to allow external refresh
 class LarsLineChartState extends State<LarsLineChart> {
   TimePeriod _selectedPeriod = TimePeriod.weekly;
-  List<FlSpot> _data = [];
+  List<FlSpot> _larsData = [];
+  List<FlSpot> _stepsData = [];
   bool _isLoading = true;
   String? _errorMessage;
-  bool _isLoadingInProgress = false; // Prevent duplicate requests
+  bool _isLoadingInProgress = false;
+  double _maxSteps = 0;
 
   @override
   void initState() {
@@ -29,18 +28,13 @@ class LarsLineChartState extends State<LarsLineChart> {
     _loadData();
   }
 
-  // Public method to refresh chart data
   Future<void> refresh() async {
-    // Reset loading flag to allow refresh even if previous request was in progress
     _isLoadingInProgress = false;
     await _loadData();
   }
 
   Future<void> _loadData() async {
-    // Prevent duplicate concurrent requests
-    if (_isLoadingInProgress) {
-      return;
-    }
+    if (_isLoadingInProgress) return;
     
     setState(() {
       _isLoading = true;
@@ -53,11 +47,13 @@ class LarsLineChartState extends State<LarsLineChart> {
       final patientCode = await api.getPatientCode();
       
       if (patientCode == null || patientCode.isEmpty) {
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
-          _data = [];
-          _errorMessage = 'No patient code set'; // Will be localized when displayed
-          _isLoadingInProgress = false; // Reset flag to allow future updates
+          _larsData = [];
+          _stepsData = [];
+          _errorMessage = 'No patient code set';
+          _isLoadingInProgress = false;
         });
         return;
       }
@@ -68,122 +64,176 @@ class LarsLineChartState extends State<LarsLineChart> {
               ? 'monthly' 
               : 'yearly';
       
-      final response = await api.getLarsData(
-        patientCode: patientCode,
-        period: periodStr,
-      );
+      final futures = await Future.wait([
+        api.getLarsData(patientCode: patientCode, period: periodStr),
+        api.getStepsChartData(patientCode: patientCode, period: periodStr).catchError((_) => {'status': 'ok', 'data': []})
+      ]);
 
-      if (response['status'] == 'ok' && response['data'] != null) {
-        final List<dynamic> dataList = response['data'];
-        final List<FlSpot> spots = [];
-        
-        for (var item in dataList) {
-          final index = item['index'] as int;
-          final score = item['score'];
-          if (score != null) {
-            spots.add(FlSpot(index.toDouble(), (score as num).toDouble()));
+      final larsResp = futures[0];
+      final stepsResp = futures[1];
+
+      List<FlSpot> larsSpots = [];
+      List<Map<String, dynamic>> rawSteps = [];
+      
+      if (larsResp['status'] == 'ok' && larsResp['data'] != null) {
+        for (var item in larsResp['data']) {
+          if (item['score'] != null && item['date'] != null) {
+            final date = DateTime.parse(item['date']);
+            larsSpots.add(FlSpot(date.millisecondsSinceEpoch.toDouble(), (item['score'] as num).toDouble()));
           }
         }
+      }
+
+      if (stepsResp['status'] == 'ok' && stepsResp['data'] != null) {
+        for (var item in stepsResp['data']) {
+          if (item['steps'] != null && item['date'] != null) {
+            final date = DateTime.parse(item['date']);
+            rawSteps.add({
+              'date': date,
+              'steps': (item['steps'] as num).toDouble()
+            });
+          }
+        }
+      }
+
+      // Calculate moving average for steps
+      List<FlSpot> stepsSpots = [];
+      double absoluteMaxSteps = 0;
+      
+      if (rawSteps.isNotEmpty) {
+        rawSteps.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
         
-        setState(() {
-          _data = spots;
-          _isLoading = false;
-          _errorMessage = null; // Clear any previous error
-          _isLoadingInProgress = false;
-        });
-      } else {
-        setState(() {
-          _data = [];
-          _isLoading = false;
-          _errorMessage = null; // No error if status is ok but no data
-          _isLoadingInProgress = false;
-        });
+        int windowSize = _selectedPeriod == TimePeriod.yearly ? 30 : 7;
+        
+        for (int i = 0; i < rawSteps.length; i++) {
+          double sum = 0;
+          int count = 0;
+          for (int j = i >= windowSize ? i - windowSize + 1 : 0; j <= i; j++) {
+            sum += rawSteps[j]['steps'] as double;
+            count++;
+          }
+          double avg = sum / count;
+          if (avg > absoluteMaxSteps) absoluteMaxSteps = avg;
+          stepsSpots.add(FlSpot((rawSteps[i]['date'] as DateTime).millisecondsSinceEpoch.toDouble(), avg));
+        }
       }
+
+      if (!mounted) return;
+      
+      setState(() {
+        _larsData = larsSpots;
+        _stepsData = stepsSpots;
+        _maxSteps = absoluteMaxSteps < 1000 ? 1000 : absoluteMaxSteps; 
+        _isLoading = false;
+        _errorMessage = null;
+        _isLoadingInProgress = false;
+      });
     } catch (e) {
+      if (mounted) {
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Failed to fetch LARS data:${e.toString()}'; // Will be localized when displayed
-          _data = [];
+          _errorMessage = 'Failed to fetch LARS data:${e.toString()}';
+          _larsData = [];
+          _stepsData = [];
           _isLoadingInProgress = false;
         });
-    }
-  }
-
-  @override
-  void didUpdateWidget(LarsLineChart oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Don't reload data on widget update - chart manages its own state
-    // Data is loaded in initState and when period button is clicked
-  }
-
-  String _getXAxisLabel(double value, TimePeriod period) {
-    switch (period) {
-      case TimePeriod.weekly:
-        // Show all 5 weeks
-        return 'W${value.toInt()}';
-      case TimePeriod.monthly:
-        // Show all 6 months
-        return 'M${value.toInt()}';
-      case TimePeriod.yearly:
-        return 'Y${value.toInt()}';
-    }
-    return '';
-  }
-
-  double _getInterval(TimePeriod period) {
-    switch (period) {
-      case TimePeriod.weekly:
-        return 1.0; // Show every week for 5 weeks
-      case TimePeriod.monthly:
-        return 1.0; // Show every month for 6 months
-      case TimePeriod.yearly:
-        return 1.0;
-    }
-  }
-
-  int _getMaxX(TimePeriod period) {
-    if (_data.isEmpty) {
-      // Default max X if no data
-      switch (period) {
-        case TimePeriod.weekly:
-          return 5;
-        case TimePeriod.monthly:
-          return 6;
-        case TimePeriod.yearly:
-          return 5;
       }
     }
-    if (_data.length == 1) {
-      // For single point, show at least to index 2 for better visualization
-      return _data.first.x.toInt() + 1;
+  }
+
+  double _getMinX() {
+    double minX = double.infinity;
+    if (_larsData.isNotEmpty) {
+      minX = _larsData.map((s) => s.x).reduce((a, b) => a < b ? a : b);
     }
-    // Use actual data max X, with some padding
-    final maxXFromData = _data.map((spot) => spot.x).reduce((a, b) => a > b ? a : b);
-    return (maxXFromData + 1).toInt();
+    if (_stepsData.isNotEmpty) {
+      double minS = _stepsData.map((s) => s.x).reduce((a, b) => a < b ? a : b);
+      if (minS < minX) minX = minS;
+    }
+    
+    if (minX == double.infinity) {
+      return DateTime.now().subtract(const Duration(days: 35)).millisecondsSinceEpoch.toDouble();
+    }
+    return minX; 
+  }
+
+  double _getMaxX() {
+    double maxX = -double.infinity;
+    if (_larsData.isNotEmpty) {
+      maxX = _larsData.map((s) => s.x).reduce((a, b) => a > b ? a : b);
+    }
+    if (_stepsData.isNotEmpty) {
+      double maxS = _stepsData.map((s) => s.x).reduce((a, b) => a > b ? a : b);
+      if (maxS > maxX) maxX = maxS;
+    }
+    
+    if (maxX == -double.infinity) {
+      return DateTime.now().millisecondsSinceEpoch.toDouble();
+    }
+    return maxX;
   }
 
   double _getMaxY() {
-    if (_data.isEmpty) return 40.0;
-    if (_data.length == 1) {
-      // For single point, set reasonable range
-      final score = _data.first.y;
-      return (score + 10).clamp(20.0, 50.0);
-    }
-    final maxYFromData = _data.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
-    // Add some padding (20% or at least 5 points)
+    if (_larsData.isEmpty) return 40.0;
+    final maxYFromData = _larsData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
     final padding = (maxYFromData * 0.2).clamp(5.0, 10.0);
     return (maxYFromData + padding).clamp(20.0, 50.0);
   }
 
+  double _getInterval(double minX, double maxX) {
+    double distance = maxX - minX;
+    if (distance <= const Duration(days: 7).inMilliseconds) {
+      return const Duration(days: 1).inMilliseconds.toDouble();
+    } else if (distance <= const Duration(days: 35).inMilliseconds) {
+      return const Duration(days: 7).inMilliseconds.toDouble();
+    } else if (distance <= const Duration(days: 180).inMilliseconds) {
+      return const Duration(days: 30).inMilliseconds.toDouble();
+    }
+    return const Duration(days: 365).inMilliseconds.toDouble();
+  }
+
+  String _formatDate(double ms) {
+    final date = DateTime.fromMillisecondsSinceEpoch(ms.toInt());
+    switch (_selectedPeriod) {
+      case TimePeriod.weekly:
+      case TimePeriod.monthly:
+        return DateFormat('d MMM').format(date);
+      case TimePeriod.yearly:
+        return DateFormat('MMM yyyy').format(date);
+    }
+  }
+
+  String _formatStepsData(double yScaled, double maxY) {
+    double realSteps = (yScaled / maxY) * _maxSteps;
+    if (realSteps >= 1000) {
+      return '${(realSteps / 1000).toStringAsFixed(1)}k';
+    }
+    return realSteps.toInt().toString();
+  }
+
+  String _getStepsTranslation(BuildContext context) {
+    String lang = Localizations.localeOf(context).languageCode;
+    if (lang == 'ru') return 'Шаги';
+    if (lang == 'lt') return 'Žingsniai';
+    return 'Steps';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final maxX = _getMaxX(_selectedPeriod);
-    final interval = _getInterval(_selectedPeriod);
+    final minX = _getMinX() - const Duration(days: 2).inMilliseconds; // Pad beginning
+    final maxX = _getMaxX() + const Duration(days: 2).inMilliseconds; // Pad end
     final maxY = _getMaxY();
+    final intervalX = _getInterval(minX, maxX);
+    final String stepsLabel = _getStepsTranslation(context);
     
+    // Scale steps data to fit into Lars Y scale
+    final scaledStepsData = _stepsData.map((spot) {
+      double scaledY = (spot.y / _maxSteps) * maxY;
+      return FlSpot(spot.x, scaledY);
+    }).toList();
+
     return Column(
       children: [
-        // Period selection buttons
         Container(
           margin: const EdgeInsets.only(bottom: 16),
           child: Row(
@@ -197,14 +247,33 @@ class LarsLineChartState extends State<LarsLineChart> {
             ],
           ),
         ),
-        // Chart
+        
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.only(bottom: 16, left: 24, right: 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(width: 12, height: 12, decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle)),
+              const SizedBox(width: 4),
+              const Text('LARS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              const SizedBox(width: 16),
+              Container(width: 12, height: 12, decoration: BoxDecoration(color: Colors.blue.withOpacity(0.5), shape: BoxShape.circle)),
+              const SizedBox(width: 4),
+              Text(
+                stepsLabel, 
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)
+              ),
+            ],
+          ),
+        ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: SizedBox(
-            height: 180,
+            height: 220,
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : _data.isEmpty && _errorMessage != null
+                : (_larsData.isEmpty && _stepsData.isEmpty && _errorMessage != null)
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -223,7 +292,7 @@ class LarsLineChartState extends State<LarsLineChart> {
                           ],
                         ),
                       )
-                    : _data.isEmpty
+                    : (_larsData.isEmpty && _stepsData.isEmpty)
                         ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -238,55 +307,79 @@ class LarsLineChartState extends State<LarsLineChart> {
                               ],
                             ),
                           )
-                    : LineChart(
-                        LineChartData(
-                          gridData: FlGridData(show: true, drawVerticalLine: false),
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 32,
-                                interval: maxY > 20 ? 10 : 5,
+                        : LineChart(
+                            LineChartData(
+                              gridData: FlGridData(show: true, drawVerticalLine: false),
+                              titlesData: FlTitlesData(
+                                leftTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 32,
+                                    interval: maxY > 20 ? 10 : 5,
+                                    getTitlesWidget: (value, meta) {
+                                      if (value == 0) return const SizedBox.shrink();
+                                      return Text(value.toInt().toString(), style: const TextStyle(fontSize: 11));
+                                    }
+                                  ),
+                                ),
+                                rightTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 36,
+                                    interval: maxY > 20 ? 10 : 5,
+                                    getTitlesWidget: (value, meta) {
+                                      if (value == 0 || value > maxY) return const SizedBox.shrink();
+                                      final label = _formatStepsData(value, maxY);
+                                      return Text(label, style: const TextStyle(fontSize: 11, color: Colors.blue));
+                                    }
+                                  ),
+                                ),
+                                bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 28,
+                                    interval: intervalX,
+                                    getTitlesWidget: (value, meta) {
+                                      if (value < minX || value > maxX) return const SizedBox.shrink();
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Text(_formatDate(value), style: const TextStyle(fontSize: 10)),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                               ),
+                              borderData: FlBorderData(show: false),
+                              minX: minX,
+                              maxX: maxX,
+                              minY: 0,
+                              maxY: maxY,
+                              lineBarsData: [
+                                if (scaledStepsData.isNotEmpty)
+                                  LineChartBarData(
+                                    spots: scaledStepsData,
+                                    isCurved: scaledStepsData.length > 1,
+                                    color: Colors.blue.withOpacity(0.5),
+                                    barWidth: 3,
+                                    dotData: FlDotData(show: scaledStepsData.length <= 1),
+                                    belowBarData: BarAreaData(
+                                      show: scaledStepsData.length > 1,
+                                      color: Colors.blue.withOpacity(0.15),
+                                    ),
+                                  ),
+                                if (_larsData.isNotEmpty)
+                                  LineChartBarData(
+                                    spots: _larsData,
+                                    isCurved: _larsData.length > 1,
+                                    color: Colors.black,
+                                    barWidth: 3,
+                                    dotData: FlDotData(show: _larsData.length <= 10),
+                                    belowBarData: BarAreaData(show: false),
+                                  ),
+                              ],
                             ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 24,
-                                interval: interval,
-                                getTitlesWidget: (value, meta) {
-                                  final label = _getXAxisLabel(value, _selectedPeriod);
-                                  if (label.isNotEmpty) {
-                                    return Text(label, style: const TextStyle(fontSize: 12));
-                                  }
-                                  return const SizedBox.shrink();
-                                },
-                              ),
-                            ),
-                            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                           ),
-                          borderData: FlBorderData(show: false),
-                          minX: _data.isEmpty 
-                              ? 1 
-                              : (_data.length == 1 
-                                  ? (_data.first.x - 0.5).clamp(0.5, double.infinity)
-                                  : (_data.map((s) => s.x).reduce((a, b) => a < b ? a : b) - 0.5).clamp(0.5, double.infinity)),
-                          maxX: maxX.toDouble(),
-                          minY: 0,
-                          maxY: maxY,
-                          lineBarsData: [
-                            LineChartBarData(
-                              spots: _data,
-                              isCurved: _data.length > 1, // Only curve if more than one point
-                              color: Colors.black,
-                              barWidth: 3,
-                              dotData: FlDotData(show: _data.length <= 10), // Show dots if few data points (including single point)
-                              belowBarData: BarAreaData(show: false),
-                            ),
-                          ],
-                        ),
-                      ),
           ),
         ),
       ],
@@ -300,7 +393,7 @@ class LarsLineChartState extends State<LarsLineChart> {
         setState(() {
           _selectedPeriod = period;
         });
-        _loadData(); // Reload data when period changes - necessary for graph functionality
+        _loadData(); 
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -319,4 +412,4 @@ class LarsLineChartState extends State<LarsLineChart> {
       ),
     );
   }
-} 
+}
