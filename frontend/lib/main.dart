@@ -69,22 +69,59 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     ),
   ];
 
+import 'package:shared_preferences/shared_preferences.dart';
+
   // Method to refresh dashboard when patient code changes
   void _refreshDashboard() {
     _dashboardKey.currentState?.refreshAllData();
-    // Fire-and-forget sync once patient code exists.
-    // ignore: unawaited_futures
-    StepTrackingService.instance.syncSteps();
+    _checkAndShowHealthDisclosure();
   }
 
   void _refreshProfile() {
     _profileKey.currentState?.loadProfile();
   }
 
+  Future<void> _checkAndShowHealthDisclosure() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeen = prefs.getBool('has_seen_health_disclosure') ?? false;
+    
+    if (!hasSeen) {
+      if (!mounted) return;
+      
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('Health Data Access'),
+          content: const Text(
+            'ABBA LARS collects your daily Steps data from Health Connect. This data is used to visibly track your physical activity alongside your LARS scores on your dashboard, and is shared with your doctor to help comprehensively monitor your recovery and health.'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('I Understand'),
+            ),
+          ],
+        ),
+      );
+      
+      await prefs.setBool('has_seen_health_disclosure', true);
+    }
+    
+    // ignore: unawaited_futures
+    StepTrackingService.instance.syncSteps();
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Initial check on load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowHealthDisclosure();
+    });
   }
 
   @override
@@ -97,7 +134,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _scheduleNotification();
-      StepTrackingService.instance.syncSteps();
+      _checkAndShowHealthDisclosure();
     }
   }
 
