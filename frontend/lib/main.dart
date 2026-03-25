@@ -7,6 +7,8 @@ import 'services/api_service.dart';
 import 'services/notification_service.dart';
 import 'services/step_tracking_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -68,8 +70,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       onPatientCodeChanged: _refreshDashboard,
     ),
   ];
-
-import 'package:shared_preferences/shared_preferences.dart';
 
   // Method to refresh dashboard when patient code changes
   void _refreshDashboard() {
