@@ -18,7 +18,7 @@ Daily Symptom Tracking — Easily record your daily condition, including bowel h
 
 Validated Questionnaires — Complete weekly LARS (Low Anterior Resection Syndrome) scores and monthly Quality of Life (QoL) assessments, including the EQ-5D-5L questionnaire when prompted. These standardized tools allow your doctor to monitor your progress over time and tailor follow-up care to your needs.
 
-Activity Monitoring — Automatically sync your aggregated daily step count with the app (via Health Connect or Google Fit) to provide your doctor with objective data on your activity levels during recovery. Optional and permission-based: you enable it in-app after setting your patient code, and we only read step counts (no names/emails are collected).
+Activity Monitoring (Health Connect) — ABBA LARS allows you to automatically sync your aggregated daily step count with the app via Health Connect to provide your doctor with objective data on your activity levels during recovery. This data is displayed alongside your LARS scores on your dashboard to help visualize your physical progress. This feature is optional and permission-based: we only read step data (no names, emails, or personal identifiers are collected), and you can disable it at any time.
 
 Clinic Integration — Your health data is securely shared with your treating physician, enabling more personalized follow-up care and better-informed medical consultations. Data is linked only to your unique patient code; no names, emails, or other identifiers are stored in the app.
 
