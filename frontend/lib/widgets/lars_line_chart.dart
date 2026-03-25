@@ -309,6 +309,31 @@ class LarsLineChartState extends State<LarsLineChart> {
                           )
                         : LineChart(
                             LineChartData(
+                              lineTouchData: LineTouchData(
+                                touchTooltipData: LineTouchTooltipData(
+                                  tooltipBgColor: Colors.black.withOpacity(0.8),
+                                  getTooltipItems: (List<LineBarSpot> touchedSpots) {
+                                    return touchedSpots.map((LineBarSpot touchedSpot) {
+                                      final textStyle = const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      );
+                                      bool isStepsLine = scaledStepsData.isNotEmpty && touchedSpot.barIndex == 0;
+                                      
+                                      if (isStepsLine) {
+                                        double realSteps = (touchedSpot.y / maxY) * _maxSteps;
+                                        String label = realSteps >= 1000
+                                            ? '${(realSteps / 1000).toStringAsFixed(1)}k'
+                                            : realSteps.toInt().toString();
+                                        return LineTooltipItem('$label $stepsLabel', textStyle);
+                                      } else {
+                                        return LineTooltipItem('LARS: ${touchedSpot.y.toInt()}', textStyle);
+                                      }
+                                    }).toList();
+                                  },
+                                ),
+                              ),
                               gridData: FlGridData(show: true, drawVerticalLine: false),
                               titlesData: FlTitlesData(
                                 leftTitles: AxisTitles(
