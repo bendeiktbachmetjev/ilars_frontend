@@ -1,8 +1,8 @@
 Terms of Use for iLARS App
 Effective Date: 2025-11-04
 Last Updated: 2025-11-04
-Please read these Terms of Use (“Terms”) carefully before using the iLARS mobile application (“App” or “Service”), operated by ABBA (“we”, “us”, or “our”).
-The platform is developed and maintained by ABBA for clinical use. ABBA is the Data Controller and provides the technical platform. The hospital or clinic acts solely as a user of the platform.
+Please read these Terms of Use (“Terms”) carefully before using the iLARS mobile application (“App” or “Service”), operated by iLARS (“we”, “us”, or “our”).
+The platform is developed and maintained for clinical use under the iLARS brand. iLARS is the Data Controller and provides the technical platform. The hospital or clinic acts solely as a user of the platform.
 By accessing or using the App, you agree to be bound by these Terms. If you do not agree, please do not use the App.
 1. Purpose of the App
 iLARS is a non-commercial, patient-oriented digital tool designed to support individuals recovering from rectal cancer surgery, particularly those experiencing Low Anterior Resection Syndrome (LARS). The App is developed for self-monitoring, education, and patient care improvement.
@@ -38,7 +38,7 @@ Use of iLARS requires:
 •	Refrain from sharing, duplicating, or exploiting the App’s content or source code
 •	Not upload content that is offensive, illegal, or harmful
 •	Maintain confidentiality of your access code and device security
-7. Intellectual Property All features, logos, algorithms, designs, and materials are owned by ABBA, unless otherwise stated. You:
+7. Intellectual Property All features, logos, algorithms, designs, and materials are owned by iLARS, unless otherwise stated. You:
 •	May not copy, distribute, or modify content without permission
 •	Retain ownership of the data you enter
 •	Grant us a perpetual, royalty-free license to use pseudonymized data for service optimization and quality improvement

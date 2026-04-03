@@ -9,6 +9,8 @@ import 'services/step_tracking_service.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'app_brand.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'iLARS',
+      title: kAppDisplayName,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

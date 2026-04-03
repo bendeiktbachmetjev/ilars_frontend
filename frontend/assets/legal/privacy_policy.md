@@ -10,8 +10,8 @@ Comprehensive Privacy Policy Template for your app (iLARS) that covers all of th
 Privacy Policy for iLARS
 Effective Date: 2025-11-04
 Last Updated: 2025-11-04
-Controller/Provider: ABBA (“we”, “us”, “our”). If you are located in the EU/UK, the data controller is ABBA.
-The platform is developed and maintained by ABBA for clinical use. ABBA is the Data Controller and is fully responsible for data privacy and GDPR compliance. The hospital or clinic acts solely as a user of the platform.
+Controller/Provider: iLARS (“we”, “us”, “our”). If you are located in the EU/UK, the data controller is iLARS.
+The platform is developed and maintained for clinical use under the iLARS brand. iLARS is the Data Controller and is fully responsible for data privacy and GDPR compliance. The hospital or clinic acts solely as a user of the platform.
 Welcome to iLARS, a mobile application designed to help individuals track bowel function and receive educational insights related to life after rectal cancer surgery, including symptoms associated with Low Anterior Resection Syndrome (LARS). This Privacy Policy explains how we collect, use, store, and protect your information, in accordance with privacy regulations across the globe, including but not limited to the EU, UK, USA, South Korea, Turkey, Russia, Australia, New Zealand, and other regions where iLARS may be used.
  
 1. What Data We Collect
