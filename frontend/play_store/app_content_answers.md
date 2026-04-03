@@ -20,7 +20,7 @@ Use these when filling **App content** in Play Console (Data safety, Health decl
 | Device or other IDs | User ID (e.g. pseudonymized patient code) | App functionality | No |
 
 **Short summary for “Data safety” section (you can paste or adapt):**  
-“ABBA LARS collects health-related data (bowel and symptom logs, optional step count) and a pseudonymized user code to provide symptom tracking and to link data to your care team. We do not collect names, emails, or phone numbers. Data is not sold or used for advertising. See our Privacy Policy for details.”
+“iLARS collects health-related data (bowel and symptom logs, optional step count) and a pseudonymized user code to provide symptom tracking and to link data to your care team. We do not collect names, emails, or phone numbers. Data is not sold or used for advertising. See our Privacy Policy for details.”
 
 ---
 

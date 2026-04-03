@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         builder: (context) => AlertDialog(
           title: const Text('Health Data Access'),
           content: const Text(
-            'ABBA LARS collects your daily Steps data from Health Connect. This data is used to visibly track your physical activity alongside your LARS scores on your dashboard, and is shared with your doctor to help comprehensively monitor your recovery and health.'
+            'iLARS collects your daily Steps data from Health Connect. This data is used to visibly track your physical activity alongside your LARS scores on your dashboard, and is shared with your doctor to help comprehensively monitor your recovery and health.'
           ),
           actions: [
             TextButton(

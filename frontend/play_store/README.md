@@ -1,6 +1,6 @@
 # Google Play Store — ready-to-use assets
 
-This folder contains everything you can copy or host when publishing ABBA LARS to the Play Store.
+This folder contains everything you can copy or host when publishing iLARS to the Play Store.
 
 | File | Use |
 |------|-----|

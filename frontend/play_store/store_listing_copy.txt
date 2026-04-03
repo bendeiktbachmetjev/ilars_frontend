@@ -1,16 +1,16 @@
 # Play Store — Main store listing (copy-paste)
 
 ## App name (max 30 characters)
-ABBA LARS
+iLARS
 
 ## Short description (max 80 characters)
 Track bowel function and recovery after rectal surgery. For patients and clinicians.
 
 ## Full description (max 4000 characters)
 
-ABBA LARS — Post-Surgical Recovery Tracker
+iLARS — Post-Surgical Recovery Tracker
 
-ABBA LARS is a specialized clinical tool designed to help patients monitor their health and functional recovery following surgery (Lower Anterior Resection). Created for use within partner healthcare institutions, the app provides a seamless way for patients to track their symptoms and share objective recovery data with their medical team.
+iLARS is a specialized clinical tool designed to help patients monitor their health and functional recovery following surgery (Lower Anterior Resection). Created for use within partner healthcare institutions, the app provides a seamless way for patients to track their symptoms and share objective recovery data with their medical team.
 
 KEY FEATURES
 
@@ -18,7 +18,7 @@ Daily Symptom Tracking — Easily record your daily condition, including bowel h
 
 Validated Questionnaires — Complete weekly LARS (Low Anterior Resection Syndrome) scores and monthly Quality of Life (QoL) assessments, including the EQ-5D-5L questionnaire when prompted. These standardized tools allow your doctor to monitor your progress over time and tailor follow-up care to your needs.
 
-Activity Monitoring (Health Connect) — ABBA LARS allows you to automatically sync your aggregated daily step count with the app via Health Connect to provide your doctor with objective data on your activity levels during recovery. This data is displayed alongside your LARS scores on your dashboard to help visualize your physical progress. This feature is optional and permission-based: we only read step data (no names, emails, or personal identifiers are collected), and you can disable it at any time.
+Activity Monitoring (Health Connect) — iLARS allows you to automatically sync your aggregated daily step count with the app via Health Connect to provide your doctor with objective data on your activity levels during recovery. This data is displayed alongside your LARS scores on your dashboard to help visualize your physical progress. This feature is optional and permission-based: we only read step data (no names, emails, or personal identifiers are collected), and you can disable it at any time.
 
 Clinic Integration — Your health data is securely shared with your treating physician, enabling more personalized follow-up care and better-informed medical consultations. Data is linked only to your unique patient code; no names, emails, or other identifiers are stored in the app.
 
@@ -26,7 +26,7 @@ Simple & Private Access — Access the app using a unique patient code provided 
 
 FOR PATIENTS
 
-If you have undergone Lower Anterior Resection surgery and are under the care of a participating clinic, ABBA LARS helps you track bowel function, symptoms, and quality of life in one place. Enter the patient code given to you by your healthcare provider to open your dashboard. You can view simple charts of your symptom trends and read educational content about diet, lifestyle, and life after surgery.
+If you have undergone Lower Anterior Resection surgery and are under the care of a participating clinic, iLARS helps you track bowel function, symptoms, and quality of life in one place. Enter the patient code given to you by your healthcare provider to open your dashboard. You can view simple charts of your symptom trends and read educational content about diet, lifestyle, and life after surgery.
 
 FOR CLINICIANS AND HOSPITALS
 
@@ -38,6 +38,6 @@ We do not collect your name, email address, or phone number. All data is tied to
 
 IMPORTANT NOTE
 
-ABBA LARS is intended for use by patients of participating hospitals. Please consult with your healthcare provider to receive your unique access code. This app is for informational and educational use only. It is not a medical device and does not replace professional medical advice, diagnosis, or treatment. Always follow your healthcare provider’s guidance for your recovery and any medical decisions.
+iLARS is intended for use by patients of participating hospitals. Please consult with your healthcare provider to receive your unique access code. This app is for informational and educational use only. It is not a medical device and does not replace professional medical advice, diagnosis, or treatment. Always follow your healthcare provider’s guidance for your recovery and any medical decisions.
 
 Supported languages: English, Lithuanian, Russian.

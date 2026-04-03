@@ -9,10 +9,10 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'ABBA LARS';
+  String get appTitle => 'iLARS';
 
   @override
-  String get appName => 'ABBA LARS';
+  String get appName => 'iLARS';
 
   @override
   String get dashboard => 'Дашборд';
@@ -76,7 +76,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Заполняйте больше еженедельных опросников, чтобы увидеть тенденции';
 
   @override
-  String get ilarsPatient => 'Пациент ABBA LARS';
+  String get ilarsPatient => 'Пациент iLARS';
 
   @override
   String get noPatientCode => 'Код пациента не задан';
