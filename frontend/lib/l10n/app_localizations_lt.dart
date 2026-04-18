@@ -58,6 +58,9 @@ class AppLocalizationsLt extends AppLocalizations {
   String get fillItNow => 'Užpildyti dabar';
 
   @override
+  String get editTodaysAnswers => 'Redaguoti šiandienos atsakymus';
+
+  @override
   String get pleaseSetPatientCode =>
       'Prašome nustatyti paciento kodą Profilyje';
 

@@ -3,7 +3,11 @@ import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
 
 class MonthlyQuestionnaireScreen extends StatefulWidget {
-  const MonthlyQuestionnaireScreen({super.key});
+  /// When non-null, the screen opens in "edit" mode and pre-fills its state
+  /// from the map. Keys match the backend column names for monthly_entries.
+  final Map<String, dynamic>? initialData;
+
+  const MonthlyQuestionnaireScreen({super.key, this.initialData});
 
   @override
   State<MonthlyQuestionnaireScreen> createState() => _MonthlyQuestionnaireScreenState();
@@ -17,6 +21,21 @@ class _MonthlyQuestionnaireScreenState extends State<MonthlyQuestionnaireScreen>
   int depressed = 1;
   int control = 0;
   int satisfaction = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    final d = widget.initialData;
+    if (d != null) {
+      avoidTravel = (d['avoid_travel'] as num?)?.toInt() ?? avoidTravel;
+      avoidSocial = (d['avoid_social'] as num?)?.toInt() ?? avoidSocial;
+      embarrassed = (d['embarrassed'] as num?)?.toInt() ?? embarrassed;
+      worryNotice = (d['worry_notice'] as num?)?.toInt() ?? worryNotice;
+      depressed = (d['depressed'] as num?)?.toInt() ?? depressed;
+      control = (d['control'] as num?)?.toInt() ?? control;
+      satisfaction = (d['satisfaction'] as num?)?.toInt() ?? satisfaction;
+    }
+  }
 
   final TextStyle labelStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
   final Color activeColor = Colors.black;

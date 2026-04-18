@@ -196,6 +196,12 @@ abstract class AppLocalizations {
   /// **'Fill It Now'**
   String get fillItNow;
 
+  /// Button to re-open and correct the questionnaire already filled today
+  ///
+  /// In en, this message translates to:
+  /// **'Edit today\'s answers'**
+  String get editTodaysAnswers;
+
   /// Message when patient code is not set
   ///
   /// In en, this message translates to:

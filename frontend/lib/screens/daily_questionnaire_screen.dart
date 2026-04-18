@@ -6,7 +6,11 @@ import '../widgets/drink_consumption_selector.dart';
 import '../l10n/app_localizations.dart';
 
 class DailyQuestionnaireScreen extends StatefulWidget {
-  const DailyQuestionnaireScreen({super.key});
+  /// When non-null, the screen opens in "edit" mode and pre-fills its state
+  /// from the map. Keys match the backend column names for daily_entries.
+  final Map<String, dynamic>? initialData;
+
+  const DailyQuestionnaireScreen({super.key, this.initialData});
 
   @override
   State<DailyQuestionnaireScreen> createState() => _DailyQuestionnaireScreenState();
@@ -27,6 +31,62 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
   // Variables for food and drink consumption
   Map<String, int> consumedFoodItems = {};
   Map<String, int> consumedDrinkItems = {};
+
+  @override
+  void initState() {
+    super.initState();
+    final d = widget.initialData;
+    if (d == null) return;
+
+    stoolCount = (d['stool_count'] as num?)?.toInt() ?? stoolCount;
+    padsUsed = (d['pads_used'] as num?)?.toInt() ?? padsUsed;
+    urgency = (d['urgency'] as String?) ?? urgency;
+    nightStools = (d['night_stools'] as String?) ?? nightStools;
+    leakage = (d['leakage'] as String?) ?? leakage;
+    incompleteEvac = (d['incomplete_evacuation'] as String?) ?? incompleteEvac;
+    bloating = (d['bloating'] as num?)?.toInt() ?? bloating;
+    impactScore = (d['impact_score'] as num?)?.toInt() ?? impactScore;
+    activityInterfere = (d['activity_interfere'] as num?)?.toInt() ?? activityInterfere;
+    bristolScale = (d['bristol_scale'] as num?)?.toInt() ?? bristolScale;
+
+    // Food keys on the UI side correspond to the selector's own keys; we map
+    // db columns back to those keys here (same names used when saving).
+    const foodMap = <String, String>{
+      'food_vegetables_all': 'vegetables_all_types',
+      'food_root_vegetables': 'root_vegetables',
+      'food_whole_grains': 'whole_grains',
+      'food_whole_grain_bread': 'whole_grain_bread',
+      'food_nuts_and_seeds': 'nuts_and_seeds',
+      'food_legumes': 'legumes',
+      'food_fruits_with_skin': 'fruits_with_skin',
+      'food_berries': 'berries_any',
+      'food_soft_fruits_no_skin': 'soft_fruits_without_skin',
+      'food_muesli_and_bran': 'muesli_and_bran_cereals',
+    };
+    const drinkMap = <String, String>{
+      'drink_water': 'water',
+      'drink_coffee': 'coffee',
+      'drink_tea': 'tea',
+      'drink_alcohol': 'alcohol',
+      'drink_carbonated': 'carbonated_drinks',
+      'drink_juices': 'juices',
+      'drink_dairy': 'dairy_drinks',
+      'drink_energy': 'energy_drinks',
+    };
+    final foods = <String, int>{};
+    foodMap.forEach((col, uiKey) {
+      final v = d[col];
+      if (v is num && v.toInt() > 0) foods[uiKey] = v.toInt();
+    });
+    if (foods.isNotEmpty) consumedFoodItems = foods;
+
+    final drinks = <String, int>{};
+    drinkMap.forEach((col, uiKey) {
+      final v = d[col];
+      if (v is num && v.toInt() > 0) drinks[uiKey] = v.toInt();
+    });
+    if (drinks.isNotEmpty) consumedDrinkItems = drinks;
+  }
 
   final TextStyle labelStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
   final TextStyle optionStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);

@@ -16,6 +16,7 @@
   "noQuestionnaireNeeded": "Klausimynas nereikalingas",
   "allQuestionnairesUpToDate": "Visi klausimynai užpildyti",
   "fillItNow": "Užpildyti dabar",
+  "editTodaysAnswers": "Redaguoti šiandienos atsakymus",
   "pleaseSetPatientCode": "Prašome nustatyti paciento kodą Profilyje",
   "failedToLoadQuestionnaireInfo": "Nepavyko įkelti klausimyno informacijos",
   "retry": "Bandyti dar kartą",

@@ -3,7 +3,11 @@ import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
 
 class Eq5d5lQuestionnaireScreen extends StatefulWidget {
-  const Eq5d5lQuestionnaireScreen({super.key});
+  /// When non-null, the screen opens in "edit" mode and pre-fills its state
+  /// from the map. Keys match the backend column names for eq5d5l_entries.
+  final Map<String, dynamic>? initialData;
+
+  const Eq5d5lQuestionnaireScreen({super.key, this.initialData});
 
   @override
   State<Eq5d5lQuestionnaireScreen> createState() => _Eq5d5lQuestionnaireScreenState();
@@ -16,6 +20,20 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
   int painDiscomfort = 0;
   int anxietyDepression = 0;
   int healthVas = 50; // default middle value for VAS (0..100)
+
+  @override
+  void initState() {
+    super.initState();
+    final d = widget.initialData;
+    if (d != null) {
+      mobility = (d['mobility'] as num?)?.toInt() ?? mobility;
+      selfCare = (d['self_care'] as num?)?.toInt() ?? selfCare;
+      usualActivities = (d['usual_activities'] as num?)?.toInt() ?? usualActivities;
+      painDiscomfort = (d['pain_discomfort'] as num?)?.toInt() ?? painDiscomfort;
+      anxietyDepression = (d['anxiety_depression'] as num?)?.toInt() ?? anxietyDepression;
+      healthVas = (d['health_vas'] as num?)?.toInt() ?? healthVas;
+    }
+  }
 
   final TextStyle labelStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
   final TextStyle optionStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);

@@ -58,6 +58,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fillItNow => 'Fill It Now';
 
   @override
+  String get editTodaysAnswers => 'Edit today\'s answers';
+
+  @override
   String get pleaseSetPatientCode => 'Please set your patient code in Profile';
 
   @override

@@ -64,6 +64,10 @@
   "@fillItNow": {
     "description": "Button to fill questionnaire"
   },
+  "editTodaysAnswers": "Edit today's answers",
+  "@editTodaysAnswers": {
+    "description": "Button to re-open and correct the questionnaire already filled today"
+  },
   "pleaseSetPatientCode": "Please set your patient code in Profile",
   "@pleaseSetPatientCode": {
     "description": "Message when patient code is not set"

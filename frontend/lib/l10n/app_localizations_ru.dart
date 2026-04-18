@@ -57,6 +57,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get fillItNow => 'Заполнить сейчас';
 
   @override
+  String get editTodaysAnswers => 'Изменить ответы за сегодня';
+
+  @override
   String get pleaseSetPatientCode =>
       'Пожалуйста, введите код пациента в Профиле';
 

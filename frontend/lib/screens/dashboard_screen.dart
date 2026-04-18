@@ -28,6 +28,10 @@ class DashboardScreen extends StatefulWidget {
 class DashboardScreenState extends State<DashboardScreen> {
   String? _nextQuestionnaireType; // "daily", "weekly", "monthly", "eq5d5l", or null
   bool _isTodayFilled = false;
+  // Which type was already filled today (if any). Used to offer an
+  // "Edit today's answers" button that re-opens the same questionnaire
+  // pre-filled with today's saved values.
+  String? _todayFilledType;
   bool _isLoadingQuestionnaire = true;
   String? _questionnaireReason;
   String? _errorMessage;
@@ -96,6 +100,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           _nextQuestionnaireType = response['questionnaire_type'];
           _isTodayFilled = response['is_today_filled'] ?? false;
+          _todayFilledType = response['today_filled_type'] as String?;
           _questionnaireReason = response['reason'];
           _isLoadingQuestionnaire = false;
           _isLoadingQuestionnaireInProgress = false;
@@ -104,6 +109,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           _nextQuestionnaireType = null;
           _isTodayFilled = false;
+          _todayFilledType = null;
           _isLoadingQuestionnaire = false;
           _errorMessage = 'failed_to_load';
           _isLoadingQuestionnaireInProgress = false;
@@ -113,6 +119,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           _nextQuestionnaireType = null;
           _isTodayFilled = false;
+          _todayFilledType = null;
           _isLoadingQuestionnaire = false;
           _errorMessage = 'error_prefix:${e.toString()}';
           _isLoadingQuestionnaireInProgress = false;
@@ -121,54 +128,86 @@ class DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _openNextQuestionnaire(BuildContext context) async {
-    if (_nextQuestionnaireType == null) {
+    if (_nextQuestionnaireType == null) return;
+    await _openQuestionnaire(context, _nextQuestionnaireType!, initialData: null);
+  }
+
+  /// Re-open the questionnaire the patient already filled today, with the
+  /// form pre-filled from the server so they can correct a mistake.
+  Future<void> _editTodayQuestionnaire(BuildContext context) async {
+    final type = _todayFilledType;
+    if (type == null) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final api = ApiService();
+    final code = await api.getPatientCode();
+    if (code == null || code.isEmpty) return;
+
+    Map<String, dynamic>? initialData;
+    try {
+      initialData = await api.getTodayEntry(patientCode: code, type: type);
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.error(e.toString()))),
+      );
       return;
     }
 
+    if (!context.mounted) return;
+    await _openQuestionnaire(context, type, initialData: initialData);
+  }
+
+  Future<void> _openQuestionnaire(
+    BuildContext context,
+    String type, {
+    required Map<String, dynamic>? initialData,
+  }) async {
     Widget screen;
-    switch (_nextQuestionnaireType) {
+    switch (type) {
       case 'daily':
-        screen = const DailyQuestionnaireScreen();
+        screen = DailyQuestionnaireScreen(initialData: initialData);
         break;
       case 'weekly':
-        screen = const WeeklyQuestionnaireScreen();
+        screen = WeeklyQuestionnaireScreen(initialData: initialData);
         break;
       case 'monthly':
-        screen = const MonthlyQuestionnaireScreen();
+        screen = MonthlyQuestionnaireScreen(initialData: initialData);
         break;
       case 'eq5d5l':
-        screen = const Eq5d5lQuestionnaireScreen();
+        screen = Eq5d5lQuestionnaireScreen(initialData: initialData);
         break;
       default:
         return;
     }
 
-    // Remember which questionnaire type was opened to check after return
-    final openedQuestionnaireType = _nextQuestionnaireType;
-    
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => screen),
     );
 
-    // Only reload questionnaire info if questionnaire was submitted (result == true)
-    // If user closed with back arrow (result == null), don't reload
+    // Only reload if the questionnaire was actually submitted (result == true).
     if (result == true) {
-      // Questionnaire was submitted successfully
       await _loadNextQuestionnaire();
-      // If Weekly (LARS) questionnaire was submitted, refresh chart data
-      // Check the type that was opened, not the current _nextQuestionnaireType (which may have changed)
-      if (openedQuestionnaireType == 'weekly') {
+      // Weekly (LARS) submissions move the chart, so refresh statistics too.
+      if (type == 'weekly') {
         _statisticsKey.currentState?.refresh();
       }
       widget.onQuestionnaireSubmitted?.call();
     }
-    // If result is null or false, user closed without submitting - do nothing
   }
 
   String _getQuestionnaireName(BuildContext context) {
+    return _questionnaireNameFor(context, _nextQuestionnaireType);
+  }
+
+  String _getTodayFilledQuestionnaireName(BuildContext context) {
+    return _questionnaireNameFor(context, _todayFilledType);
+  }
+
+  String _questionnaireNameFor(BuildContext context, String? type) {
     final l10n = AppLocalizations.of(context)!;
-    switch (_nextQuestionnaireType) {
+    switch (type) {
       case 'daily':
         return l10n.dailyQuestionnaire;
       case 'weekly':
@@ -311,7 +350,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '${_getQuestionnaireName(context)} - Completed',
+                      '${_getTodayFilledQuestionnaireName(context)} - Completed',
                       style: const TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.w600,
@@ -321,6 +360,30 @@ class DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ],
               ),
+              // Let the patient correct today's submission until end of day.
+              // The backend's ON CONFLICT upsert makes the re-submit idempotent.
+              if (_todayFilledType != null) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      side: BorderSide(color: Colors.grey[400]!),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    label: Text(
+                      AppLocalizations.of(context)!.editTodaysAnswers,
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                    onPressed: () => _editTodayQuestionnaire(context),
+                  ),
+                ),
+              ],
             ],
             ],
           ],

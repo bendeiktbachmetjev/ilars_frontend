@@ -3,7 +3,11 @@ import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
 
 class WeeklyQuestionnaireScreen extends StatefulWidget {
-  const WeeklyQuestionnaireScreen({super.key});
+  /// When non-null, the screen opens in "edit" mode and pre-fills its state
+  /// from the map. Keys match the backend column names for weekly_entries.
+  final Map<String, dynamic>? initialData;
+
+  const WeeklyQuestionnaireScreen({super.key, this.initialData});
 
   @override
   State<WeeklyQuestionnaireScreen> createState() => _WeeklyQuestionnaireScreenState();
@@ -15,6 +19,19 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
   int bowelFrequency = 0;
   int repeatBowelOpening = 0;
   int urgencyToToilet = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    final d = widget.initialData;
+    if (d != null) {
+      flatusControl = (d['flatus_control'] as num?)?.toInt() ?? flatusControl;
+      liquidStoolLeakage = (d['liquid_stool_leakage'] as num?)?.toInt() ?? liquidStoolLeakage;
+      bowelFrequency = (d['bowel_frequency'] as num?)?.toInt() ?? bowelFrequency;
+      repeatBowelOpening = (d['repeat_bowel_opening'] as num?)?.toInt() ?? repeatBowelOpening;
+      urgencyToToilet = (d['urgency_to_toilet'] as num?)?.toInt() ?? urgencyToToilet;
+    }
+  }
 
   final TextStyle labelStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
   final TextStyle optionStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);

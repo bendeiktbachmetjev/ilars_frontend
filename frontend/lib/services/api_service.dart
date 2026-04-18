@@ -324,4 +324,23 @@ class ApiService {
       throw Exception('Network error: ${e.toString()}');
     }
   }
+
+  /// Fetch today's already-saved entry for [type] (daily/weekly/monthly/eq5d5l).
+  /// Used to pre-fill a questionnaire form when the user wants to edit an
+  /// answer they already submitted earlier today.
+  /// Returns the inner `data` map, or null if there is no entry for today.
+  Future<Map<String, dynamic>?> getTodayEntry({
+    required String patientCode,
+    required String type,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/getTodayEntry?type=$type');
+    final response = await http.get(uri, headers: _headers(patientCode));
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Server error: ${response.statusCode}');
+    }
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = decoded['data'];
+    if (data is Map<String, dynamic>) return data;
+    return null;
+  }
 }

@@ -16,6 +16,7 @@
   "noQuestionnaireNeeded": "Опросник не требуется",
   "allQuestionnairesUpToDate": "Все опросники заполнены",
   "fillItNow": "Заполнить сейчас",
+  "editTodaysAnswers": "Изменить ответы за сегодня",
   "pleaseSetPatientCode": "Пожалуйста, введите код пациента в Профиле",
   "failedToLoadQuestionnaireInfo": "Не удалось загрузить информацию об опроснике",
   "retry": "Повторить",
