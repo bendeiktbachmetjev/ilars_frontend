@@ -32,6 +32,14 @@
   "@yearly": {
     "description": "Yearly time period label"
   },
+  "threeMonths": "3 Mo",
+  "@threeMonths": {
+    "description": "3 months time period short label"
+  },
+  "sixMonths": "6 Mo",
+  "@sixMonths": {
+    "description": "6 months time period short label"
+  },
   "todaysQuestionnaire": "Today's Questionnaire",
   "@todaysQuestionnaire": {
     "description": "Today's questionnaire section title"

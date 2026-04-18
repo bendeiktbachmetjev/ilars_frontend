@@ -33,6 +33,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get yearly => 'Ежегодно';
 
   @override
+  String get threeMonths => '3 мес.';
+
+  @override
+  String get sixMonths => '6 мес.';
+
+  @override
   String get todaysQuestionnaire => 'Опросник на сегодня';
 
   @override

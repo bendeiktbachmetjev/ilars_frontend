@@ -33,6 +33,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yearly => 'Yearly';
 
   @override
+  String get threeMonths => '3 Mo';
+
+  @override
+  String get sixMonths => '6 Mo';
+
+  @override
   String get todaysQuestionnaire => 'Today\'s Questionnaire';
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
-import '../l10n/app_localizations.dart';
+import '../../services/api_service.dart';
+import '../../l10n/app_localizations.dart';
+import '../../theme/apple_style.dart';
 
 class MonthlyQuestionnaireScreen extends StatefulWidget {
   /// When non-null, the screen opens in "edit" mode and pre-fills its state
@@ -76,10 +77,13 @@ class _MonthlyQuestionnaireScreenState extends State<MonthlyQuestionnaireScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppleStyle.surface,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.monthlyQualityOfLife),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppleStyle.surface,
+        surfaceTintColor: AppleStyle.surface,
+        scrolledUnderElevation: 0,
         elevation: 0,
         foregroundColor: Colors.black,
       ),

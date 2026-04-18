@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
-import 'screens/dashboard_screen.dart' show DashboardScreen, DashboardScreenState;
-import 'screens/profile_screen.dart';
+import 'screens/dashboard/dashboard_screen.dart'
+    show DashboardScreen, DashboardScreenState;
+import 'screens/profile/profile_screen.dart';
 import 'services/api_service.dart';
 import 'services/notification_service.dart';
 import 'services/step_tracking_service.dart';
+import 'theme/apple_style.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,7 +44,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white,
+        // Unify the entire chrome (scaffold + app bar + nav bar) with the
+        // same iOS-like light surface tone so there are no visible seams
+        // between chrome and content.
+        scaffoldBackgroundColor: AppleStyle.surface,
       ),
       home: const HomePage(),
     );
@@ -184,25 +189,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppleStyle.surface,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppleStyle.surface,
+        surfaceTintColor: AppleStyle.surface,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        toolbarHeight: 56,
         title: ShaderMask(
           shaderCallback: (Rect bounds) {
-            return const LinearGradient(
-              colors: [Color(0xFF3A8DFF), Color(0xFF8F5CFF)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ).createShader(bounds);
+            return AppleStyle.brandGradient.createShader(bounds);
           },
           child: Text(
             AppLocalizations.of(context)!.appTitle,
             style: const TextStyle(
-              fontSize: 36,
+              fontSize: 28,
               fontWeight: FontWeight.w900,
               color: Colors.white,
-              letterSpacing: 1.2,
+              letterSpacing: 0.6,
             ),
           ),
         ),
@@ -211,96 +216,121 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         index: _selectedIndex,
         children: _screens,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: GradientIconLabel(
-              icon: Icons.dashboard,
-              label: AppLocalizations.of(context)!.dashboard,
-              selected: _selectedIndex == 0,
-            ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: GradientIconLabel(
-              icon: Icons.person,
-              label: AppLocalizations.of(context)!.profile,
-              selected: _selectedIndex == 1,
-            ),
-            label: '',
-          ),
-        ],
-        currentIndex: _selectedIndex,
+      bottomNavigationBar: _CompactNavBar(
+        selectedIndex: _selectedIndex,
         onTap: _onItemTapped,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
       ),
     );
   }
 }
 
-class GradientIconLabel extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool selected;
-  const GradientIconLabel({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.selected,
+/// Compact custom bottom navigation bar. Same surface tone as the rest of
+/// the chrome, noticeably shorter than the default [BottomNavigationBar],
+/// and uses the brand gradient on the selected icon.
+class _CompactNavBar extends StatelessWidget {
+  const _CompactNavBar({
+    required this.selectedIndex,
+    required this.onTap,
   });
+
+  final int selectedIndex;
+  final ValueChanged<int> onTap;
 
   @override
   Widget build(BuildContext context) {
-    final gradient = const LinearGradient(
-      colors: [Color(0xFF3A8DFF), Color(0xFF8F5CFF)],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppleStyle.surface,
+        border: Border(
+          top: BorderSide(color: Color(0xFFE5E5EA), width: 0.5),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 54,
+          child: Row(
+            children: [
+              Expanded(
+                child: _CompactNavItem(
+                  icon: Icons.grid_view_rounded,
+                  label: l10n.dashboard,
+                  selected: selectedIndex == 0,
+                  onTap: () => onTap(0),
+                ),
+              ),
+              Expanded(
+                child: _CompactNavItem(
+                  icon: Icons.person_rounded,
+                  label: l10n.profile,
+                  selected: selectedIndex == 1,
+                  onTap: () => onTap(1),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        selected
-            ? ShaderMask(
-                shaderCallback: (Rect bounds) {
-                  return gradient.createShader(bounds);
-                },
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                ),
-              )
-            : Icon(
-                icon,
-                color: Colors.grey,
-              ),
-        const SizedBox(height: 2),
-        selected
-            ? ShaderMask(
-                shaderCallback: (Rect bounds) {
-                  return gradient.createShader(bounds);
-                },
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.white,
+  }
+}
+
+class _CompactNavItem extends StatelessWidget {
+  const _CompactNavItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            selected
+                ? ShaderMask(
+                    shaderCallback: (bounds) =>
+                        AppleStyle.brandGradient.createShader(bounds),
+                    child: Icon(icon, color: Colors.white, size: 22),
+                  )
+                : Icon(icon, color: const Color(0xFF9CA3AF), size: 22),
+            const SizedBox(height: 2),
+            selected
+                ? ShaderMask(
+                    shaderCallback: (bounds) =>
+                        AppleStyle.brandGradient.createShader(bounds),
+                    child: Text(
+                      label,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11,
+                        color: Colors.white,
+                        letterSpacing: -0.1,
+                      ),
+                    ),
+                  )
+                : Text(
+                    label,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                      color: Color(0xFF9CA3AF),
+                      letterSpacing: -0.1,
+                    ),
                   ),
-                ),
-              )
-            : Text(
-                label,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: Colors.grey,
-                ),
-              ),
-      ],
+          ],
+        ),
+      ),
     );
   }
 }

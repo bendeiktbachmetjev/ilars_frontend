@@ -4,7 +4,7 @@ import '../services/api_service.dart';
 import '../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
-enum TimePeriod { weekly, monthly, yearly }
+enum TimePeriod { weekly, monthly, threeMonths, sixMonths, yearly }
 
 class LarsLineChart extends StatefulWidget {
   const LarsLineChart({super.key});
@@ -58,11 +58,14 @@ class LarsLineChartState extends State<LarsLineChart> {
         return;
       }
 
-      final periodStr = _selectedPeriod == TimePeriod.weekly 
-          ? 'weekly' 
-          : _selectedPeriod == TimePeriod.monthly 
-              ? 'monthly' 
-              : 'yearly';
+      // Backend accepts: weekly | monthly | 3months | 6months | yearly.
+      final periodStr = switch (_selectedPeriod) {
+        TimePeriod.weekly => 'weekly',
+        TimePeriod.monthly => 'monthly',
+        TimePeriod.threeMonths => '3months',
+        TimePeriod.sixMonths => '6months',
+        TimePeriod.yearly => 'yearly',
+      };
       
       final futures = await Future.wait([
         api.getLarsData(patientCode: patientCode, period: periodStr),
@@ -133,6 +136,10 @@ class LarsLineChartState extends State<LarsLineChart> {
         return 7;
       case TimePeriod.monthly:
         return 30;
+      case TimePeriod.threeMonths:
+        return 90;
+      case TimePeriod.sixMonths:
+        return 180;
       case TimePeriod.yearly:
         return 365;
     }
@@ -166,6 +173,12 @@ class LarsLineChartState extends State<LarsLineChart> {
         return const Duration(days: 1).inMilliseconds.toDouble();
       case TimePeriod.monthly:
         return const Duration(days: 7).inMilliseconds.toDouble();
+      case TimePeriod.threeMonths:
+        // ~biweekly ticks fit 6 labels across 90 days
+        return const Duration(days: 14).inMilliseconds.toDouble();
+      case TimePeriod.sixMonths:
+        // ~monthly ticks fit 6 labels across 180 days
+        return const Duration(days: 30).inMilliseconds.toDouble();
       case TimePeriod.yearly:
         return const Duration(days: 60).inMilliseconds.toDouble();
     }
@@ -176,6 +189,8 @@ class LarsLineChartState extends State<LarsLineChart> {
     switch (_selectedPeriod) {
       case TimePeriod.weekly:
       case TimePeriod.monthly:
+      case TimePeriod.threeMonths:
+      case TimePeriod.sixMonths:
         return DateFormat('d MMM').format(date);
       case TimePeriod.yearly:
         return DateFormat('MMM yyyy').format(date);
@@ -216,15 +231,17 @@ class LarsLineChartState extends State<LarsLineChart> {
 
     return Column(
       children: [
-        Container(
-          margin: const EdgeInsets.only(bottom: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8).copyWith(bottom: 16),
+          // Use short labels ("3 Mo", "6 Mo", "3 мес.", "3 mėn.", ...) so all 5
+          // buttons fit on one line without scrolling on narrow phones.
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildPeriodButton(TimePeriod.weekly, AppLocalizations.of(context)!.weekly),
-              const SizedBox(width: 8),
               _buildPeriodButton(TimePeriod.monthly, AppLocalizations.of(context)!.monthly),
-              const SizedBox(width: 8),
+              _buildPeriodButton(TimePeriod.threeMonths, AppLocalizations.of(context)!.threeMonths),
+              _buildPeriodButton(TimePeriod.sixMonths, AppLocalizations.of(context)!.sixMonths),
               _buildPeriodButton(TimePeriod.yearly, AppLocalizations.of(context)!.yearly),
             ],
           ),
@@ -405,7 +422,7 @@ class LarsLineChartState extends State<LarsLineChart> {
         _loadData(); 
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? Colors.black : Colors.grey[200],
           borderRadius: BorderRadius.circular(20),
@@ -415,7 +432,7 @@ class LarsLineChartState extends State<LarsLineChart> {
           style: TextStyle(
             color: isSelected ? Colors.white : Colors.black,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
       ),

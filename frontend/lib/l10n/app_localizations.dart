@@ -148,6 +148,18 @@ abstract class AppLocalizations {
   /// **'Yearly'**
   String get yearly;
 
+  /// 3 months time period label
+  ///
+  /// In en, this message translates to:
+  /// **'3 Months'**
+  String get threeMonths;
+
+  /// 6 months time period label
+  ///
+  /// In en, this message translates to:
+  /// **'6 Months'**
+  String get sixMonths;
+
   /// Today's questionnaire section title
   ///
   /// In en, this message translates to:

@@ -33,6 +33,12 @@ class AppLocalizationsLt extends AppLocalizations {
   String get yearly => 'Metų';
 
   @override
+  String get threeMonths => '3 mėn.';
+
+  @override
+  String get sixMonths => '6 mėn.';
+
+  @override
   String get todaysQuestionnaire => 'Šiandienos klausimynas';
 
   @override

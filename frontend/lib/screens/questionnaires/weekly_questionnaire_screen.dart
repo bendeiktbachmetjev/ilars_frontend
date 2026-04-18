@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
-import '../l10n/app_localizations.dart';
+import '../../services/api_service.dart';
+import '../../l10n/app_localizations.dart';
+import '../../theme/apple_style.dart';
 
 class WeeklyQuestionnaireScreen extends StatefulWidget {
   /// When non-null, the screen opens in "edit" mode and pre-fills its state
@@ -104,10 +105,13 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
     final totalScore = _calculateTotalScore();
     
     return Scaffold(
+      backgroundColor: AppleStyle.surface,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.larsScoreQuestionnaire),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppleStyle.surface,
+        surfaceTintColor: AppleStyle.surface,
+        scrolledUnderElevation: 0,
         elevation: 0,
         foregroundColor: Colors.black,
       ),
