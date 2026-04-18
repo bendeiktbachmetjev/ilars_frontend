@@ -72,58 +72,44 @@ class LarsLineChartState extends State<LarsLineChart> {
       final larsResp = futures[0];
       final stepsResp = futures[1];
 
-      List<FlSpot> larsSpots = [];
-      List<Map<String, dynamic>> rawSteps = [];
-      
+      final List<FlSpot> larsSpots = [];
+      final List<FlSpot> stepsSpots = [];
+      double absoluteMaxSteps = 0;
+
       if (larsResp['status'] == 'ok' && larsResp['data'] != null) {
         for (var item in larsResp['data']) {
           if (item['score'] != null && item['date'] != null) {
             final date = DateTime.parse(item['date']);
-            larsSpots.add(FlSpot(date.millisecondsSinceEpoch.toDouble(), (item['score'] as num).toDouble()));
+            larsSpots.add(FlSpot(
+              date.millisecondsSinceEpoch.toDouble(),
+              (item['score'] as num).toDouble(),
+            ));
           }
         }
+        larsSpots.sort((a, b) => a.x.compareTo(b.x));
       }
 
+      // Use raw daily step counts — no moving average, no aggregation.
+      // User preference: show concrete entries in every scale.
       if (stepsResp['status'] == 'ok' && stepsResp['data'] != null) {
         for (var item in stepsResp['data']) {
           if (item['steps'] != null && item['date'] != null) {
             final date = DateTime.parse(item['date']);
-            rawSteps.add({
-              'date': date,
-              'steps': (item['steps'] as num).toDouble()
-            });
+            final steps = (item['steps'] as num).toDouble();
+            if (steps > absoluteMaxSteps) absoluteMaxSteps = steps;
+            stepsSpots.add(FlSpot(date.millisecondsSinceEpoch.toDouble(), steps));
           }
         }
-      }
-
-      // Calculate moving average for steps
-      List<FlSpot> stepsSpots = [];
-      double absoluteMaxSteps = 0;
-      
-      if (rawSteps.isNotEmpty) {
-        rawSteps.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
-        
-        int windowSize = _selectedPeriod == TimePeriod.yearly ? 30 : 7;
-        
-        for (int i = 0; i < rawSteps.length; i++) {
-          double sum = 0;
-          int count = 0;
-          for (int j = i >= windowSize ? i - windowSize + 1 : 0; j <= i; j++) {
-            sum += rawSteps[j]['steps'] as double;
-            count++;
-          }
-          double avg = sum / count;
-          if (avg > absoluteMaxSteps) absoluteMaxSteps = avg;
-          stepsSpots.add(FlSpot((rawSteps[i]['date'] as DateTime).millisecondsSinceEpoch.toDouble(), avg));
-        }
+        stepsSpots.sort((a, b) => a.x.compareTo(b.x));
       }
 
       if (!mounted) return;
-      
+
       setState(() {
         _larsData = larsSpots;
         _stepsData = stepsSpots;
-        _maxSteps = absoluteMaxSteps < 1000 ? 1000 : absoluteMaxSteps; 
+        // Keep a sane floor so the right-axis labels don't collapse when counts are tiny.
+        _maxSteps = absoluteMaxSteps < 1000 ? 1000 : absoluteMaxSteps;
         _isLoading = false;
         _errorMessage = null;
         _isLoadingInProgress = false;
@@ -141,36 +127,30 @@ class LarsLineChartState extends State<LarsLineChart> {
     }
   }
 
+  int get _windowDays {
+    switch (_selectedPeriod) {
+      case TimePeriod.weekly:
+        return 7;
+      case TimePeriod.monthly:
+        return 30;
+      case TimePeriod.yearly:
+        return 365;
+    }
+  }
+
+  // Anchor the X axis to the full selected window so the chart scale stays
+  // consistent even when data is sparse (instead of stretching to fit data).
   double _getMinX() {
-    double minX = double.infinity;
-    if (_larsData.isNotEmpty) {
-      minX = _larsData.map((s) => s.x).reduce((a, b) => a < b ? a : b);
-    }
-    if (_stepsData.isNotEmpty) {
-      double minS = _stepsData.map((s) => s.x).reduce((a, b) => a < b ? a : b);
-      if (minS < minX) minX = minS;
-    }
-    
-    if (minX == double.infinity) {
-      return DateTime.now().subtract(const Duration(days: 35)).millisecondsSinceEpoch.toDouble();
-    }
-    return minX; 
+    final now = DateTime.now();
+    final start = DateTime(now.year, now.month, now.day)
+        .subtract(Duration(days: _windowDays));
+    return start.millisecondsSinceEpoch.toDouble();
   }
 
   double _getMaxX() {
-    double maxX = -double.infinity;
-    if (_larsData.isNotEmpty) {
-      maxX = _larsData.map((s) => s.x).reduce((a, b) => a > b ? a : b);
-    }
-    if (_stepsData.isNotEmpty) {
-      double maxS = _stepsData.map((s) => s.x).reduce((a, b) => a > b ? a : b);
-      if (maxS > maxX) maxX = maxS;
-    }
-    
-    if (maxX == -double.infinity) {
-      return DateTime.now().millisecondsSinceEpoch.toDouble();
-    }
-    return maxX;
+    final now = DateTime.now();
+    final end = DateTime(now.year, now.month, now.day);
+    return end.millisecondsSinceEpoch.toDouble();
   }
 
   double _getMaxY() {
@@ -180,16 +160,15 @@ class LarsLineChartState extends State<LarsLineChart> {
     return (maxYFromData + padding).clamp(20.0, 50.0);
   }
 
-  double _getInterval(double minX, double maxX) {
-    double distance = maxX - minX;
-    if (distance <= const Duration(days: 7).inMilliseconds) {
-      return const Duration(days: 1).inMilliseconds.toDouble();
-    } else if (distance <= const Duration(days: 35).inMilliseconds) {
-      return const Duration(days: 7).inMilliseconds.toDouble();
-    } else if (distance <= const Duration(days: 180).inMilliseconds) {
-      return const Duration(days: 30).inMilliseconds.toDouble();
+  double _getInterval() {
+    switch (_selectedPeriod) {
+      case TimePeriod.weekly:
+        return const Duration(days: 1).inMilliseconds.toDouble();
+      case TimePeriod.monthly:
+        return const Duration(days: 7).inMilliseconds.toDouble();
+      case TimePeriod.yearly:
+        return const Duration(days: 60).inMilliseconds.toDouble();
     }
-    return const Duration(days: 365).inMilliseconds.toDouble();
   }
 
   String _formatDate(double ms) {
@@ -220,13 +199,16 @@ class LarsLineChartState extends State<LarsLineChart> {
 
   @override
   Widget build(BuildContext context) {
-    final minX = _getMinX() - const Duration(days: 2).inMilliseconds; // Pad beginning
-    final maxX = _getMaxX() + const Duration(days: 2).inMilliseconds; // Pad end
+    // A small visual pad on both sides so the first/last point isn't clipped by the Y axis line.
+    final pad = (_windowDays * 0.02).clamp(0.5, 3.0);
+    final minX = _getMinX() - (pad * const Duration(days: 1).inMilliseconds);
+    final maxX = _getMaxX() + (pad * const Duration(days: 1).inMilliseconds);
     final maxY = _getMaxY();
-    final intervalX = _getInterval(minX, maxX);
+    final intervalX = _getInterval();
     final String stepsLabel = _getStepsTranslation(context);
-    
-    // Scale steps data to fit into Lars Y scale
+    final bool hasSteps = _stepsData.isNotEmpty;
+
+    // Project steps onto the shared Y scale (0..maxY) so a single axis can hold both series.
     final scaledStepsData = _stepsData.map((spot) {
       double scaledY = (spot.y / _maxSteps) * maxY;
       return FlSpot(spot.x, scaledY);
@@ -349,10 +331,11 @@ class LarsLineChartState extends State<LarsLineChart> {
                                 ),
                                 rightTitles: AxisTitles(
                                   sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 36,
+                                    showTitles: hasSteps,
+                                    reservedSize: hasSteps ? 36 : 0,
                                     interval: maxY > 20 ? 10 : 5,
                                     getTitlesWidget: (value, meta) {
+                                      if (!hasSteps) return const SizedBox.shrink();
                                       if (value == 0 || value > maxY) return const SizedBox.shrink();
                                       final label = _formatStepsData(value, maxY);
                                       return Text(label, style: const TextStyle(fontSize: 11, color: Colors.blue));
@@ -384,10 +367,11 @@ class LarsLineChartState extends State<LarsLineChart> {
                                 if (scaledStepsData.isNotEmpty)
                                   LineChartBarData(
                                     spots: scaledStepsData,
-                                    isCurved: scaledStepsData.length > 1,
+                                    // Avoid curve overshoot when there are many dense daily points.
+                                    isCurved: scaledStepsData.length > 1 && scaledStepsData.length < 60,
                                     color: Colors.blue.withOpacity(0.5),
                                     barWidth: 3,
-                                    dotData: FlDotData(show: scaledStepsData.length <= 1),
+                                    dotData: FlDotData(show: scaledStepsData.length <= 14),
                                     belowBarData: BarAreaData(
                                       show: scaledStepsData.length > 1,
                                       color: Colors.blue.withOpacity(0.15),
@@ -396,10 +380,10 @@ class LarsLineChartState extends State<LarsLineChart> {
                                 if (_larsData.isNotEmpty)
                                   LineChartBarData(
                                     spots: _larsData,
-                                    isCurved: _larsData.length > 1,
+                                    isCurved: _larsData.length > 1 && _larsData.length < 60,
                                     color: Colors.black,
                                     barWidth: 3,
-                                    dotData: FlDotData(show: _larsData.length <= 10),
+                                    dotData: FlDotData(show: _larsData.length <= 20),
                                     belowBarData: BarAreaData(show: false),
                                   ),
                               ],
