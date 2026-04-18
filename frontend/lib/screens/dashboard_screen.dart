@@ -276,6 +276,47 @@ class DashboardScreenState extends State<DashboardScreen> {
               // 1. On app open (initState)
               // 2. On Save patient code (refreshAllData)
               // 3. On Submit questionnaire (in _openNextQuestionnaire)
+            ] else if (_todayFilledType != null) ...[
+              // Patient already filled something today. Show "Completed" plus an
+              // "Edit today's answers" button so they can fix a mistake until
+              // end of day. This branch is checked BEFORE the generic
+              // "all up to date" message so the edit affordance is never hidden.
+              Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green[600], size: 28),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '${_getTodayFilledQuestionnaireName(context)} - Completed',
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    side: BorderSide(color: Colors.grey[400]!),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.edit_outlined, size: 18),
+                  label: Text(
+                    AppLocalizations.of(context)!.editTodaysAnswers,
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () => _editTodayQuestionnaire(context),
+                ),
+              ),
             ] else if (_nextQuestionnaireType == null) ...[
               Row(
                 children: [
@@ -344,13 +385,16 @@ class DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
             ] else ...[
+              // Fallback: is_today_filled was reported true but the server
+              // didn't tell us which type, so we can't open an edit screen.
+              // Just show the completion state without an edit affordance.
               Row(
                 children: [
                   Icon(Icons.check_circle, color: Colors.green[600], size: 28),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '${_getTodayFilledQuestionnaireName(context)} - Completed',
+                      AppLocalizations.of(context)!.allQuestionnairesUpToDate,
                       style: const TextStyle(
                         color: Colors.green,
                         fontWeight: FontWeight.w600,
@@ -360,30 +404,6 @@ class DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ],
               ),
-              // Let the patient correct today's submission until end of day.
-              // The backend's ON CONFLICT upsert makes the re-submit idempotent.
-              if (_todayFilledType != null) ...[
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      side: BorderSide(color: Colors.grey[400]!),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: const Icon(Icons.edit_outlined, size: 18),
-                    label: Text(
-                      AppLocalizations.of(context)!.editTodaysAnswers,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                    ),
-                    onPressed: () => _editTodayQuestionnaire(context),
-                  ),
-                ),
-              ],
             ],
             ],
           ],
