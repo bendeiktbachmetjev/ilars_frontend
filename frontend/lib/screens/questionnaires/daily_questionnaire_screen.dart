@@ -18,16 +18,20 @@ class DailyQuestionnaireScreen extends StatefulWidget {
 }
 
 class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
+  // Counters start at 0: the patient sees the number, and 0 is a real answer.
   int stoolCount = 0;
   int padsUsed = 0;
-  String urgency = 'No';
-  String nightStools = 'No';
-  String leakage = 'None';
-  String incompleteEvac = 'No';
-  int bloating = 0;
-  int impactScore = 0;
-  int activityInterfere = 0;
-  int bristolScale = 1;
+  // null = not answered yet. Nothing is pre-selected, so an untouched
+  // question can never be saved as a real answer.
+  String? urgency;
+  String? nightStools;
+  String? leakage;
+  String? incompleteEvac;
+  int? bloating;
+  int? impactScore;
+  int? activityInterfere;
+  int? bristolScale; // optional: stays null (saved as empty) if skipped
+  bool showMissing = false;
   
   // Variables for food and drink consumption
   Map<String, int> consumedFoodItems = {};
@@ -41,14 +45,14 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
 
     stoolCount = (d['stool_count'] as num?)?.toInt() ?? stoolCount;
     padsUsed = (d['pads_used'] as num?)?.toInt() ?? padsUsed;
-    urgency = (d['urgency'] as String?) ?? urgency;
-    nightStools = (d['night_stools'] as String?) ?? nightStools;
-    leakage = (d['leakage'] as String?) ?? leakage;
-    incompleteEvac = (d['incomplete_evacuation'] as String?) ?? incompleteEvac;
-    bloating = (d['bloating'] as num?)?.toInt() ?? bloating;
-    impactScore = (d['impact_score'] as num?)?.toInt() ?? impactScore;
-    activityInterfere = (d['activity_interfere'] as num?)?.toInt() ?? activityInterfere;
-    bristolScale = (d['bristol_scale'] as num?)?.toInt() ?? bristolScale;
+    urgency = d['urgency'] as String?;
+    nightStools = d['night_stools'] as String?;
+    leakage = d['leakage'] as String?;
+    incompleteEvac = d['incomplete_evacuation'] as String?;
+    bloating = (d['bloating'] as num?)?.toInt();
+    impactScore = (d['impact_score'] as num?)?.toInt();
+    activityInterfere = (d['activity_interfere'] as num?)?.toInt();
+    bristolScale = (d['bristol_scale'] as num?)?.toInt();
 
     // Food keys on the UI side correspond to the selector's own keys; we map
     // db columns back to those keys here (same names used when saving).
@@ -126,7 +130,14 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
     );
   }
 
-  Widget _buildYesNo(BuildContext context, {required String value, required void Function(String) onChanged}) {
+  Widget _buildLabel(String text, Object? value) {
+    return Text(
+      text,
+      style: labelStyle.copyWith(color: showMissing && value == null ? Colors.red : null),
+    );
+  }
+
+  Widget _buildYesNo(BuildContext context, {required String? value, required void Function(String) onChanged}) {
     final l10n = AppLocalizations.of(context)!;
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -190,29 +201,39 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
     );
   }
 
+  /// [value] is null until the patient touches the slider: the thumb then sits
+  /// at 0 greyed out and "—" is shown. A tap where the thumb already is only
+  /// fires onChangeStart, so it is used to record that first answer too.
   Widget _buildSlider({
     required String label,
-    required double value,
+    required int? value,
     required int max,
-    required void Function(double) onChanged,
+    required void Function(int) onChanged,
   }) {
+    final color = value == null ? Colors.grey[400] : activeColor;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: labelStyle),
+        Row(
+          children: [
+            Expanded(child: _buildLabel(label, value)),
+            Text(value?.toString() ?? '—', style: labelStyle),
+          ],
+        ),
         Row(
           children: [
             const Text('0', style: TextStyle(fontSize: 14)),
             Expanded(
               child: Slider(
-                value: value,
+                value: (value ?? 0).toDouble(),
                 min: 0,
                 max: max.toDouble(),
                 divisions: max,
-                label: value.round().toString(),
-                onChanged: onChanged,
-                activeColor: activeColor,
-                thumbColor: activeColor,
+                label: value?.toString(),
+                onChangeStart: value == null ? (v) => onChanged(v.round()) : null,
+                onChanged: (v) => onChanged(v.round()),
+                activeColor: color,
+                thumbColor: color,
               ),
             ),
             Text('$max', style: const TextStyle(fontSize: 14)),
@@ -338,7 +359,7 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(AppLocalizations.of(context)!.urgent, style: labelStyle),
+                                _buildLabel(AppLocalizations.of(context)!.urgent, urgency),
                                 const SizedBox(height: 8),
                                 _buildYesNo(
                                   context,
@@ -362,7 +383,7 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(AppLocalizations.of(context)!.nightStools, style: labelStyle),
+                                _buildLabel(AppLocalizations.of(context)!.nightStools, nightStools),
                                 const SizedBox(height: 8),
                                 _buildYesNo(
                                   context,
@@ -391,7 +412,7 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
                             ),
                             child: Column(
                               children: [
-                                Text(AppLocalizations.of(context)!.stoolLeakage, style: labelStyle),
+                                _buildLabel(AppLocalizations.of(context)!.stoolLeakage, leakage),
                                 const SizedBox(height: 8),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -426,7 +447,7 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Center(child: Text(AppLocalizations.of(context)!.incompleteEvacuation, style: labelStyle)),
+                                Center(child: _buildLabel(AppLocalizations.of(context)!.incompleteEvacuation, incompleteEvac)),
                                 const SizedBox(height: 8),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -446,17 +467,25 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
                     // Bloating
                     _buildSlider(
                       label: AppLocalizations.of(context)!.bloating,
-                      value: bloating.toDouble(),
+                      value: bloating,
                       max: 10,
-                      onChanged: (v) => setState(() => bloating = v.round()),
+                      onChanged: (v) => setState(() => bloating = v),
                     ),
                     const SizedBox(height: 20),
                     // Impact on life
                     _buildSlider(
                       label: AppLocalizations.of(context)!.impactOnLife,
-                      value: impactScore.toDouble(),
+                      value: impactScore,
                       max: 10,
-                      onChanged: (v) => setState(() => impactScore = v.round()),
+                      onChanged: (v) => setState(() => impactScore = v),
+                    ),
+                    const SizedBox(height: 20),
+                    // Interference with daily activities
+                    _buildSlider(
+                      label: AppLocalizations.of(context)!.activityInterference,
+                      value: activityInterfere,
+                      max: 10,
+                      onChanged: (v) => setState(() => activityInterfere = v),
                     ),
                     const SizedBox(height: 20),
                     // Drink consumption
@@ -503,6 +532,19 @@ class _DailyQuestionnaireScreenState extends State<DailyQuestionnaireScreen> {
                         elevation: 0,
                       ),
                       onPressed: () async {
+                        if (urgency == null ||
+                            nightStools == null ||
+                            leakage == null ||
+                            incompleteEvac == null ||
+                            bloating == null ||
+                            impactScore == null ||
+                            activityInterfere == null) {
+                          setState(() => showMissing = true);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(AppLocalizations.of(context)!.answerAllQuestions)),
+                          );
+                          return;
+                        }
                         final api = ApiService();
                         final code = await api.getPatientCode();
                         if (code == null || code.isEmpty) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 
 class BristolScaleSelector extends StatelessWidget {
-  final int selectedValue;
+  final int? selectedValue; // null = nothing chosen (allowed: the question is optional)
   final Function(int) onChanged;
 
   const BristolScaleSelector({

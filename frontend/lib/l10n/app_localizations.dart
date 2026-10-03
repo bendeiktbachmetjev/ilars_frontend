@@ -148,16 +148,16 @@ abstract class AppLocalizations {
   /// **'Yearly'**
   String get yearly;
 
-  /// 3 months time period label
+  /// 3 months time period short label
   ///
   /// In en, this message translates to:
-  /// **'3 Months'**
+  /// **'3 Mo'**
   String get threeMonths;
 
-  /// 6 months time period label
+  /// 6 months time period short label
   ///
   /// In en, this message translates to:
-  /// **'6 Months'**
+  /// **'6 Mo'**
   String get sixMonths;
 
   /// Today's questionnaire section title
@@ -219,6 +219,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please set your patient code in Profile'**
   String get pleaseSetPatientCode;
+
+  /// Shown when the patient taps Submit before answering every required question
+  ///
+  /// In en, this message translates to:
+  /// **'Please answer all questions'**
+  String get answerAllQuestions;
 
   /// Error message when questionnaire info fails to load
   ///
@@ -381,6 +387,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Impact on life'**
   String get impactOnLife;
+
+  /// Daily diary slider: how much symptoms interfered with daily activities (0-10)
+  ///
+  /// In en, this message translates to:
+  /// **'Activity interference'**
+  String get activityInterference;
 
   /// Food consumption question
   ///
