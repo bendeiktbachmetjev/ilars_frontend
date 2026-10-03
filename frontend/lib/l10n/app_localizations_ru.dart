@@ -70,6 +70,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Пожалуйста, введите код пациента в Профиле';
 
   @override
+  String get answerAllQuestions => 'Пожалуйста, ответьте на все вопросы';
+
+  @override
   String get failedToLoadQuestionnaireInfo =>
       'Не удалось загрузить информацию об опроснике';
 
@@ -154,6 +157,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get impactOnLife => 'Влияние на жизнь';
+
+  @override
+  String get activityInterference => 'Влияние на повседневные дела';
 
   @override
   String get whatDidYouConsumeToday => 'Что вы сегодня ели?';

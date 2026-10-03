@@ -80,6 +80,10 @@
   "@pleaseSetPatientCode": {
     "description": "Message when patient code is not set"
   },
+  "answerAllQuestions": "Please answer all questions",
+  "@answerAllQuestions": {
+    "description": "Shown when the patient taps Submit before answering every required question"
+  },
   "failedToLoadQuestionnaireInfo": "Failed to load questionnaire info",
   "@failedToLoadQuestionnaireInfo": {
     "description": "Error message when questionnaire info fails to load"
@@ -192,6 +196,10 @@
   "impactOnLife": "Impact on life",
   "@impactOnLife": {
     "description": "Impact on life label"
+  },
+  "activityInterference": "Activity interference",
+  "@activityInterference": {
+    "description": "Daily diary slider: how much symptoms interfered with daily activities (0-10)"
   },
   "whatDidYouConsumeToday": "What did you consume today?",
   "@whatDidYouConsumeToday": {

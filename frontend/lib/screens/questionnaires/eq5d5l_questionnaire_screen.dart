@@ -15,24 +15,27 @@ class Eq5d5lQuestionnaireScreen extends StatefulWidget {
 }
 
 class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
-  int mobility = 0;
-  int selfCare = 0;
-  int usualActivities = 0;
-  int painDiscomfort = 0;
-  int anxietyDepression = 0;
-  int healthVas = 50; // default middle value for VAS (0..100)
+  // null = not answered yet. Nothing is pre-selected, so an untouched
+  // question can never be saved as a real answer.
+  int? mobility;
+  int? selfCare;
+  int? usualActivities;
+  int? painDiscomfort;
+  int? anxietyDepression;
+  int? healthVas; // VAS 0..100, set on the patient's first touch of the slider
+  bool showMissing = false;
 
   @override
   void initState() {
     super.initState();
     final d = widget.initialData;
     if (d != null) {
-      mobility = (d['mobility'] as num?)?.toInt() ?? mobility;
-      selfCare = (d['self_care'] as num?)?.toInt() ?? selfCare;
-      usualActivities = (d['usual_activities'] as num?)?.toInt() ?? usualActivities;
-      painDiscomfort = (d['pain_discomfort'] as num?)?.toInt() ?? painDiscomfort;
-      anxietyDepression = (d['anxiety_depression'] as num?)?.toInt() ?? anxietyDepression;
-      healthVas = (d['health_vas'] as num?)?.toInt() ?? healthVas;
+      mobility = (d['mobility'] as num?)?.toInt();
+      selfCare = (d['self_care'] as num?)?.toInt();
+      usualActivities = (d['usual_activities'] as num?)?.toInt();
+      painDiscomfort = (d['pain_discomfort'] as num?)?.toInt();
+      anxietyDepression = (d['anxiety_depression'] as num?)?.toInt();
+      healthVas = (d['health_vas'] as num?)?.toInt();
     }
   }
 
@@ -41,9 +44,16 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
   final Color selectedColor = Colors.black;
   final Color unselectedColor = Color(0xFFE0E0E0);
 
+  Widget _buildLabel(String text, int? value) {
+    return Text(
+      text,
+      style: labelStyle.copyWith(color: showMissing && value == null ? Colors.red : null),
+    );
+  }
+
   Widget _buildSelector({
     required List<String> options,
-    required int value,
+    required int? value,
     required void Function(int) onChanged,
   }) {
     return Column(
@@ -107,7 +117,7 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                 child: ListView(
                   children: [
                     const SizedBox(height: 12),
-                    Text(AppLocalizations.of(context)!.mobility, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.mobility, mobility),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -121,7 +131,7 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                       onChanged: (v) => setState(() => mobility = v),
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.selfCare, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.selfCare, selfCare),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -135,7 +145,7 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                       onChanged: (v) => setState(() => selfCare = v),
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.usualActivitiesDescription, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.usualActivitiesDescription, usualActivities),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -149,7 +159,7 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                       onChanged: (v) => setState(() => usualActivities = v),
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.painDiscomfort, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.painDiscomfort, painDiscomfort),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -163,7 +173,7 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                       onChanged: (v) => setState(() => painDiscomfort = v),
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.anxietyDepression, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.anxietyDepression, anxietyDepression),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -178,7 +188,7 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                     ),
                     const SizedBox(height: 24),
                     // Health VAS
-                    Text(AppLocalizations.of(context)!.healthTodayTitle, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.healthTodayTitle, healthVas),
                     const SizedBox(height: 8),
                     Text(
                       AppLocalizations.of(context)!.healthTodayDescription,
@@ -200,14 +210,18 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                               height: 220,
                               child: RotatedBox(
                                 quarterTurns: -1,
+                                // Until the first touch the thumb sits at 0 but is
+                                // greyed out and no value is recorded. A tap where the
+                                // thumb already is only fires onChangeStart.
                                 child: Slider(
-                                  value: healthVas.toDouble(),
+                                  value: (healthVas ?? 0).toDouble(),
                                   min: 0,
                                   max: 100,
                                   divisions: 100,
-                                  label: healthVas.toString(),
+                                  label: healthVas?.toString(),
+                                  onChangeStart: (v) => setState(() => healthVas ??= v.round()),
                                   onChanged: (v) => setState(() => healthVas = v.round()),
-                                  activeColor: Colors.black,
+                                  activeColor: healthVas == null ? Colors.grey[400] : Colors.black,
                                   inactiveColor: Colors.grey[300],
                                 ),
                               ),
@@ -232,7 +246,7 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                                   border: Border.all(color: Colors.grey[400]!),
                                 ),
                                 child: Text(
-                                  healthVas.toString(),
+                                  healthVas?.toString() ?? '—',
                                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -268,6 +282,18 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                         elevation: 0,
                       ),
                       onPressed: () async {
+                        if (mobility == null ||
+                            selfCare == null ||
+                            usualActivities == null ||
+                            painDiscomfort == null ||
+                            anxietyDepression == null ||
+                            healthVas == null) {
+                          setState(() => showMissing = true);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(AppLocalizations.of(context)!.answerAllQuestions)),
+                          );
+                          return;
+                        }
                         final api = ApiService();
                         final code = await api.getPatientCode();
                         if (code == null || code.isEmpty) {
@@ -281,11 +307,11 @@ class _Eq5d5lQuestionnaireScreenState extends State<Eq5d5lQuestionnaireScreen> {
                         try {
                           final resp = await api.sendEq5d5l(
                             patientCode: code,
-                            mobility: mobility,
-                            selfCare: selfCare,
-                            usualActivities: usualActivities,
-                            painDiscomfort: painDiscomfort,
-                            anxietyDepression: anxietyDepression,
+                            mobility: mobility!,
+                            selfCare: selfCare!,
+                            usualActivities: usualActivities!,
+                            painDiscomfort: painDiscomfort!,
+                            anxietyDepression: anxietyDepression!,
                             healthVas: healthVas,
                             rawData: {
                               'mobility': mobility,

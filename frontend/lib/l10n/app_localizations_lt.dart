@@ -71,6 +71,9 @@ class AppLocalizationsLt extends AppLocalizations {
       'Prašome nustatyti paciento kodą Profilyje';
 
   @override
+  String get answerAllQuestions => 'Prašome atsakyti į visus klausimus';
+
+  @override
   String get failedToLoadQuestionnaireInfo =>
       'Nepavyko įkelti klausimyno informacijos';
 
@@ -155,6 +158,9 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get impactOnLife => 'Poveikis gyvenimui';
+
+  @override
+  String get activityInterference => 'Veiklos trukdymas';
 
   @override
   String get whatDidYouConsumeToday => 'Ką jūs šiandien suvalgėte?';

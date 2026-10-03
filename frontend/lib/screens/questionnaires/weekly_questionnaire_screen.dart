@@ -15,22 +15,25 @@ class WeeklyQuestionnaireScreen extends StatefulWidget {
 }
 
 class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
-  int flatusControl = 0;
-  int liquidStoolLeakage = 0;
-  int bowelFrequency = 0;
-  int repeatBowelOpening = 0;
-  int urgencyToToilet = 0;
+  // null = not answered yet. Nothing is pre-selected, so an untouched
+  // question can never be saved as a real answer.
+  int? flatusControl;
+  int? liquidStoolLeakage;
+  int? bowelFrequency;
+  int? repeatBowelOpening;
+  int? urgencyToToilet;
+  bool showMissing = false;
 
   @override
   void initState() {
     super.initState();
     final d = widget.initialData;
     if (d != null) {
-      flatusControl = (d['flatus_control'] as num?)?.toInt() ?? flatusControl;
-      liquidStoolLeakage = (d['liquid_stool_leakage'] as num?)?.toInt() ?? liquidStoolLeakage;
-      bowelFrequency = (d['bowel_frequency'] as num?)?.toInt() ?? bowelFrequency;
-      repeatBowelOpening = (d['repeat_bowel_opening'] as num?)?.toInt() ?? repeatBowelOpening;
-      urgencyToToilet = (d['urgency_to_toilet'] as num?)?.toInt() ?? urgencyToToilet;
+      flatusControl = (d['flatus_control'] as num?)?.toInt();
+      liquidStoolLeakage = (d['liquid_stool_leakage'] as num?)?.toInt();
+      bowelFrequency = (d['bowel_frequency'] as num?)?.toInt();
+      repeatBowelOpening = (d['repeat_bowel_opening'] as num?)?.toInt();
+      urgencyToToilet = (d['urgency_to_toilet'] as num?)?.toInt();
     }
   }
 
@@ -39,9 +42,16 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
   final Color selectedColor = Colors.black;
   final Color unselectedColor = Color(0xFFE0E0E0);
 
+  Widget _buildLabel(String text, int? value) {
+    return Text(
+      text,
+      style: labelStyle.copyWith(color: showMissing && value == null ? Colors.red : null),
+    );
+  }
+
   Widget _buildSelector({
     required List<String> options,
-    required int value,
+    required int? value,
     required void Function(int) onChanged,
   }) {
     return Column(
@@ -83,7 +93,15 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
     );
   }
 
-  int _calculateTotalScore() {
+  /// Returns null until all five questions are answered.
+  int? _calculateTotalScore() {
+    if (flatusControl == null ||
+        liquidStoolLeakage == null ||
+        bowelFrequency == null ||
+        repeatBowelOpening == null ||
+        urgencyToToilet == null) {
+      return null;
+    }
     // LARS scoring system based on the standard questionnaire
     final scores = [
       [0, 4, 7], // flatusControl: No never, Yes less than once per week, Yes at least once per week
@@ -93,11 +111,11 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
       [0, 11, 16], // urgencyToToilet: No never, Yes less than once per week, Yes at least once per week
     ];
     
-    return scores[0][flatusControl] + 
-           scores[1][liquidStoolLeakage] + 
-           scores[2][bowelFrequency] + 
-           scores[3][repeatBowelOpening] + 
-           scores[4][urgencyToToilet];
+    return scores[0][flatusControl!] + 
+           scores[1][liquidStoolLeakage!] + 
+           scores[2][bowelFrequency!] + 
+           scores[3][repeatBowelOpening!] + 
+           scores[4][urgencyToToilet!];
   }
 
   @override
@@ -150,7 +168,7 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
                         ],
                       ),
                     ),
-                    Text(AppLocalizations.of(context)!.flatusControlQuestion, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.flatusControlQuestion, flatusControl),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -162,7 +180,7 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
                       onChanged: (v) => setState(() => flatusControl = v),
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.liquidStoolLeakageQuestion, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.liquidStoolLeakageQuestion, liquidStoolLeakage),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -174,7 +192,7 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
                       onChanged: (v) => setState(() => liquidStoolLeakage = v),
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.bowelFrequencyQuestion, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.bowelFrequencyQuestion, bowelFrequency),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -187,7 +205,7 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
                       onChanged: (v) => setState(() => bowelFrequency = v),
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.repeatBowelOpeningQuestion, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.repeatBowelOpeningQuestion, repeatBowelOpening),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -199,7 +217,7 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
                       onChanged: (v) => setState(() => repeatBowelOpening = v),
                     ),
                     const SizedBox(height: 24),
-                    Text(AppLocalizations.of(context)!.urgencyToToiletQuestion, style: labelStyle),
+                    _buildLabel(AppLocalizations.of(context)!.urgencyToToiletQuestion, urgencyToToilet),
                     const SizedBox(height: 8),
                     _buildSelector(
                       options: [
@@ -223,10 +241,12 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
                         children: [
                           Text(AppLocalizations.of(context)!.totalScore, style: labelStyle.copyWith(fontSize: 18)),
                           Text(
-                            totalScore.toString(),
+                            totalScore?.toString() ?? '—',
                             style: labelStyle.copyWith(
                               fontSize: 24,
-                              color: totalScore <= 20 ? Colors.green : totalScore <= 29 ? Colors.orange : Colors.red,
+                              color: totalScore == null
+                                  ? Colors.black54
+                                  : totalScore <= 20 ? Colors.green : totalScore <= 29 ? Colors.orange : Colors.red,
                             ),
                           ),
                         ],
@@ -259,6 +279,13 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
                         elevation: 0,
                       ),
                       onPressed: () async {
+                        if (totalScore == null) {
+                          setState(() => showMissing = true);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(AppLocalizations.of(context)!.answerAllQuestions)),
+                          );
+                          return;
+                        }
                         final api = ApiService();
                         final code = await api.getPatientCode();
                         if (code == null || code.isEmpty) {
@@ -272,11 +299,11 @@ class _WeeklyQuestionnaireScreenState extends State<WeeklyQuestionnaireScreen> {
                         try {
                           final resp = await api.sendWeekly(
                             patientCode: code,
-                            flatusControl: flatusControl,
-                            liquidStoolLeakage: liquidStoolLeakage,
-                            bowelFrequency: bowelFrequency,
-                            repeatBowelOpening: repeatBowelOpening,
-                            urgencyToToilet: urgencyToToilet,
+                            flatusControl: flatusControl!,
+                            liquidStoolLeakage: liquidStoolLeakage!,
+                            bowelFrequency: bowelFrequency!,
+                            repeatBowelOpening: repeatBowelOpening!,
+                            urgencyToToilet: urgencyToToilet!,
                             rawData: {"total_score": totalScore},
                           );
                           if (resp.statusCode >= 200 && resp.statusCode < 300) {

@@ -15,56 +15,74 @@ class MonthlyQuestionnaireScreen extends StatefulWidget {
 }
 
 class _MonthlyQuestionnaireScreenState extends State<MonthlyQuestionnaireScreen> {
-  int avoidTravel = 1;
-  int avoidSocial = 1;
-  int embarrassed = 1;
-  int worryNotice = 1;
-  int depressed = 1;
-  int control = 0;
-  int satisfaction = 0;
+  // null = not answered yet. Nothing is pre-selected, so an untouched
+  // slider can never be saved as a real answer.
+  int? avoidTravel;
+  int? avoidSocial;
+  int? embarrassed;
+  int? worryNotice;
+  int? depressed;
+  int? control;
+  int? satisfaction;
+  bool showMissing = false;
 
   @override
   void initState() {
     super.initState();
     final d = widget.initialData;
     if (d != null) {
-      avoidTravel = (d['avoid_travel'] as num?)?.toInt() ?? avoidTravel;
-      avoidSocial = (d['avoid_social'] as num?)?.toInt() ?? avoidSocial;
-      embarrassed = (d['embarrassed'] as num?)?.toInt() ?? embarrassed;
-      worryNotice = (d['worry_notice'] as num?)?.toInt() ?? worryNotice;
-      depressed = (d['depressed'] as num?)?.toInt() ?? depressed;
-      control = (d['control'] as num?)?.toInt() ?? control;
-      satisfaction = (d['satisfaction'] as num?)?.toInt() ?? satisfaction;
+      avoidTravel = (d['avoid_travel'] as num?)?.toInt();
+      avoidSocial = (d['avoid_social'] as num?)?.toInt();
+      embarrassed = (d['embarrassed'] as num?)?.toInt();
+      worryNotice = (d['worry_notice'] as num?)?.toInt();
+      depressed = (d['depressed'] as num?)?.toInt();
+      control = (d['control'] as num?)?.toInt();
+      satisfaction = (d['satisfaction'] as num?)?.toInt();
     }
   }
 
   final TextStyle labelStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
   final Color activeColor = Colors.black;
 
+  /// [value] is null until the patient touches the slider: the thumb then sits
+  /// at [min] greyed out and "—" is shown. A tap where the thumb already is
+  /// only fires onChangeStart, so it is used to record that first answer too.
   Widget _buildLikertSlider({
     required String label,
-    required double value,
+    required int? value,
     required int min,
     required int max,
-    required void Function(double) onChanged,
+    required void Function(int) onChanged,
   }) {
+    final color = value == null ? Colors.grey[400] : activeColor;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: labelStyle),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: labelStyle.copyWith(color: showMissing && value == null ? Colors.red : null),
+              ),
+            ),
+            Text(value?.toString() ?? '—', style: labelStyle),
+          ],
+        ),
         Row(
           children: [
             Text('$min', style: const TextStyle(fontSize: 14)),
             Expanded(
               child: Slider(
-                value: value,
+                value: (value ?? min).toDouble(),
                 min: min.toDouble(),
                 max: max.toDouble(),
                 divisions: max - min,
-                label: value.round().toString(),
-                onChanged: onChanged,
-                activeColor: activeColor,
-                thumbColor: activeColor,
+                label: value?.toString(),
+                onChangeStart: value == null ? (v) => onChanged(v.round()) : null,
+                onChanged: (v) => onChanged(v.round()),
+                activeColor: color,
+                thumbColor: color,
               ),
             ),
             Text('$max', style: const TextStyle(fontSize: 14)),
@@ -98,58 +116,58 @@ class _MonthlyQuestionnaireScreenState extends State<MonthlyQuestionnaireScreen>
                     const SizedBox(height: 12),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.avoidTraveling,
-                      value: avoidTravel.toDouble(),
+                      value: avoidTravel,
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => avoidTravel = v.round()),
+                      onChanged: (v) => setState(() => avoidTravel = v),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.avoidSocialActivities,
-                      value: avoidSocial.toDouble(),
+                      value: avoidSocial,
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => avoidSocial = v.round()),
+                      onChanged: (v) => setState(() => avoidSocial = v),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.feelEmbarrassed,
-                      value: embarrassed.toDouble(),
+                      value: embarrassed,
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => embarrassed = v.round()),
+                      onChanged: (v) => setState(() => embarrassed = v),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.worryOthersNotice,
-                      value: worryNotice.toDouble(),
+                      value: worryNotice,
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => worryNotice = v.round()),
+                      onChanged: (v) => setState(() => worryNotice = v),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.feelDepressed,
-                      value: depressed.toDouble(),
+                      value: depressed,
                       min: 1,
                       max: 4,
-                      onChanged: (v) => setState(() => depressed = v.round()),
+                      onChanged: (v) => setState(() => depressed = v),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.feelInControl,
-                      value: control.toDouble(),
+                      value: control,
                       min: 0,
                       max: 10,
-                      onChanged: (v) => setState(() => control = v.round()),
+                      onChanged: (v) => setState(() => control = v),
                     ),
                     const SizedBox(height: 24),
                     _buildLikertSlider(
                       label: AppLocalizations.of(context)!.overallSatisfaction,
-                      value: satisfaction.toDouble(),
+                      value: satisfaction,
                       min: 0,
                       max: 10,
-                      onChanged: (v) => setState(() => satisfaction = v.round()),
+                      onChanged: (v) => setState(() => satisfaction = v),
                     ),
                   ],
                 ),
@@ -178,6 +196,19 @@ class _MonthlyQuestionnaireScreenState extends State<MonthlyQuestionnaireScreen>
                         elevation: 0,
                       ),
                       onPressed: () async {
+                        if (avoidTravel == null ||
+                            avoidSocial == null ||
+                            embarrassed == null ||
+                            worryNotice == null ||
+                            depressed == null ||
+                            control == null ||
+                            satisfaction == null) {
+                          setState(() => showMissing = true);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(AppLocalizations.of(context)!.answerAllQuestions)),
+                          );
+                          return;
+                        }
                         final api = ApiService();
                         final code = await api.getPatientCode();
                         if (code == null || code.isEmpty) {
@@ -188,7 +219,7 @@ class _MonthlyQuestionnaireScreenState extends State<MonthlyQuestionnaireScreen>
                           return;
                         }
 
-                        final overall = ((control + satisfaction) / 2).round();
+                        final overall = ((control! + satisfaction!) / 2).round();
                         final raw = {
                           'avoid_travel': avoidTravel,
                           'avoid_social': avoidSocial,

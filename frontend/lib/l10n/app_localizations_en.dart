@@ -70,6 +70,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSetPatientCode => 'Please set your patient code in Profile';
 
   @override
+  String get answerAllQuestions => 'Please answer all questions';
+
+  @override
   String get failedToLoadQuestionnaireInfo =>
       'Failed to load questionnaire info';
 
@@ -154,6 +157,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get impactOnLife => 'Impact on life';
+
+  @override
+  String get activityInterference => 'Activity interference';
 
   @override
   String get whatDidYouConsumeToday => 'What did you consume today?';
