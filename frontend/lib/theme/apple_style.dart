@@ -19,13 +19,23 @@ class AppleStyle {
   /// pill buttons.
   static const Color inputFill = Color(0xFFF2F2F7);
 
+  /// Hairline dividers and the segmented-control track.
+  static const Color track = Color(0xFFE5E5EA);
+
   // ---- Text ---------------------------------------------------------------
   static const Color primaryText = Color(0xFF111111);
   static const Color secondaryText = Color(0xFF6B7280);
 
   // ---- Semantic colors ----------------------------------------------------
   static const Color success = Color(0xFF34C759);
+  static const Color warning = Color(0xFFFF9500);
   static const Color destructive = Color(0xFFFF3B30);
+
+  /// Darker shades of the semantic colors, readable as text on their own
+  /// light tint.
+  static const Color successText = Color(0xFF1F7A3A);
+  static const Color warningText = Color(0xFFA35A00);
+  static const Color destructiveText = Color(0xFFC4281C);
 
   // ---- Brand / accent -----------------------------------------------------
   /// Brand gradient endpoints (used for the iLARS wordmark and primary CTAs).

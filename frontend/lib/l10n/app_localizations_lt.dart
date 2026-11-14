@@ -594,4 +594,45 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get subscribed => 'Sėkmingai užsiprenumeruota';
+
+  @override
+  String get recommendations => 'Rekomendacijos';
+
+  @override
+  String get recSegmentDiet => 'Mityba';
+
+  @override
+  String get recSegmentExercise => 'Judėjimas';
+
+  @override
+  String get recLevelRecommended => 'Rekomenduojama';
+
+  @override
+  String get recLevelLimit => 'Vengti ar riboti';
+
+  @override
+  String get recLevelAvoid => 'Atsisakyti';
+
+  @override
+  String get recReadMore => 'Skaityti daugiau';
+
+  @override
+  String get recShowLess => 'Rodyti mažiau';
+
+  @override
+  String get recKegelLockedBody =>
+      'Kegelio pratimai atrakinami tiems, kurie teisingos technikos išmoko Fizinės medicinos ir reabilitacijos (FMR) skyriuje.';
+
+  @override
+  String get recKegelUnlock => 'Atrakinti';
+
+  @override
+  String get recKegelDialogTitle =>
+      'Ar išmokote teisingos technikos FMR skyriuje?';
+
+  @override
+  String get recKegelDialogYes => 'Taip, išmokau';
+
+  @override
+  String get recKegelDialogNo => 'Dar ne';
 }

@@ -178,5 +178,18 @@
   "unsubscribePromos": "Отписаться от рекламных писем",
   "subscribePromos": "Подписаться на рекламные письма",
   "unsubscribed": "Подписка успешно отменена",
-  "subscribed": "Подписка успешно оформлена"
+  "subscribed": "Подписка успешно оформлена",
+  "recommendations": "Рекомендации",
+  "recSegmentDiet": "Питание",
+  "recSegmentExercise": "Движение",
+  "recLevelRecommended": "Рекомендуется",
+  "recLevelLimit": "Избегать или ограничить",
+  "recLevelAvoid": "Отказаться",
+  "recReadMore": "Читать далее",
+  "recShowLess": "Свернуть",
+  "recKegelLockedBody": "Упражнения Кегеля открываются тем, кто освоил правильную технику в отделении физической медицины и реабилитации (ФМР).",
+  "recKegelUnlock": "Открыть",
+  "recKegelDialogTitle": "Вы освоили правильную технику в отделении ФМР?",
+  "recKegelDialogYes": "Да, освоил(а)",
+  "recKegelDialogNo": "Пока нет"
 }

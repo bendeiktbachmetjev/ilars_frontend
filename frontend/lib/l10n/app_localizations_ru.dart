@@ -596,4 +596,45 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get subscribed => 'Подписка успешно оформлена';
+
+  @override
+  String get recommendations => 'Рекомендации';
+
+  @override
+  String get recSegmentDiet => 'Питание';
+
+  @override
+  String get recSegmentExercise => 'Движение';
+
+  @override
+  String get recLevelRecommended => 'Рекомендуется';
+
+  @override
+  String get recLevelLimit => 'Избегать или ограничить';
+
+  @override
+  String get recLevelAvoid => 'Отказаться';
+
+  @override
+  String get recReadMore => 'Читать далее';
+
+  @override
+  String get recShowLess => 'Свернуть';
+
+  @override
+  String get recKegelLockedBody =>
+      'Упражнения Кегеля открываются тем, кто освоил правильную технику в отделении физической медицины и реабилитации (ФМР).';
+
+  @override
+  String get recKegelUnlock => 'Открыть';
+
+  @override
+  String get recKegelDialogTitle =>
+      'Вы освоили правильную технику в отделении ФМР?';
+
+  @override
+  String get recKegelDialogYes => 'Да, освоил(а)';
+
+  @override
+  String get recKegelDialogNo => 'Пока нет';
 }
