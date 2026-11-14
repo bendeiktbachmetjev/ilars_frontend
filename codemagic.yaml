@@ -1,0 +1,40 @@
+# Codemagic: builds the iOS store version of the iLARS patient app (the Flutter app is in frontend/).
+# Set up once in Codemagic (Personal Account → Settings):
+#   - Integrations → Developer Portal: the team's App Store Connect key "SimuFlow" (one key serves
+#     every app of ABBA GROUP, MB);
+#   - codemagic.yaml settings → Code signing identities: the team's Apple Distribution certificate,
+#     and an App Store profile for com.example.larsApp made with that certificate at
+#     developer.apple.com, then brought in with "Fetch profiles".
+# The app is added in Codemagic as type "Other", so it reads this file.
+# Android is built on the owner's Mac and uploaded to Google Play by hand.
+workflows:
+  ios-app-store:
+    name: iOS → App Store Connect
+    working_directory: frontend
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: SimuFlow
+    environment:
+      flutter: 3.41.2
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.example.larsApp
+    scripts:
+      - name: Packages
+        script: flutter pub get
+      - name: CocoaPods
+        script: cd ios && pod install
+      - name: Signing
+        script: xcode-project use-profiles --project ios/Runner.xcodeproj
+      - name: Build the IPA (version and build number from pubspec.yaml)
+        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - "**/build/ios/ipa/*.ipa"
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Upload only: the build then waits in App Store Connect to be chosen for the version.
+        submit_to_testflight: false
