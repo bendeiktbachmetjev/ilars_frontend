@@ -119,24 +119,10 @@ class NotificationService {
   }
 
   /// Get next notification time (today at 19:00, or tomorrow if already past)
-  tz.TZDateTime _getNextNotificationTime() {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduledDate = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      19, // 7 PM
-      0,  // 0 minutes
-    );
-
-    // If it's already past 19:00 today, schedule for tomorrow
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-
-    return scheduledDate;
-  }
+  /// on the phone's own clock. `tz.local` stays UTC in this app (the phone's
+  /// time zone is never set), so the time is built from the phone's DateTime.
+  tz.TZDateTime _getNextNotificationTime() =>
+      tz.TZDateTime.from(nextDailyReminderTime(DateTime.now()), tz.UTC);
 
   /// Cancel the daily notification
   Future<void> cancelDailyNotification() async {
@@ -160,5 +146,13 @@ class NotificationService {
     // Return true as iOS will show permission dialog automatically
     return true;
   }
+}
+
+/// 19:00 on the phone's own clock: today, or tomorrow if it has already passed.
+DateTime nextDailyReminderTime(DateTime now) {
+  final today = DateTime(now.year, now.month, now.day, 19);
+  return today.isBefore(now)
+      ? DateTime(now.year, now.month, now.day + 1, 19)
+      : today;
 }
 
