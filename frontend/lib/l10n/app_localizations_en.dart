@@ -586,4 +586,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscribed => 'Subscribed successfully';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get recSegmentDiet => 'Nutrition';
+
+  @override
+  String get recSegmentExercise => 'Movement';
+
+  @override
+  String get recLevelRecommended => 'Recommended';
+
+  @override
+  String get recLevelLimit => 'Avoid or limit';
+
+  @override
+  String get recLevelAvoid => 'Cut out completely';
+
+  @override
+  String get recReadMore => 'Read more';
+
+  @override
+  String get recShowLess => 'Show less';
+
+  @override
+  String get recKegelLockedBody =>
+      'Kegel exercises are unlocked for those who have learned the correct technique in the Physical Medicine and Rehabilitation (PMR) department.';
+
+  @override
+  String get recKegelUnlock => 'Unlock';
+
+  @override
+  String get recKegelDialogTitle =>
+      'Did you learn the correct technique in the PMR department?';
+
+  @override
+  String get recKegelDialogYes => 'Yes, I did';
+
+  @override
+  String get recKegelDialogNo => 'Not yet';
 }

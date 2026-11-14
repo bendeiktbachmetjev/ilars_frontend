@@ -4,6 +4,7 @@ import 'l10n/app_localizations.dart';
 import 'screens/dashboard/dashboard_screen.dart'
     show DashboardScreen, DashboardScreenState;
 import 'screens/profile/profile_screen.dart';
+import 'screens/recommendations/recommendations_screen.dart';
 import 'services/api_service.dart';
 import 'services/notification_service.dart';
 import 'services/step_tracking_service.dart';
@@ -64,6 +65,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   final GlobalKey<DashboardScreenState> _dashboardKey = GlobalKey<DashboardScreenState>();
+  final GlobalKey<RecommendationsScreenState> _recommendationsKey = GlobalKey<RecommendationsScreenState>();
   final GlobalKey<ProfileScreenState> _profileKey = GlobalKey<ProfileScreenState>();
 
   late final List<Widget> _screens = [
@@ -72,6 +74,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       onQuestionnaireSubmitted: () => _scheduleNotification(),
       onPatientCodeChanged: _refreshProfile,
     ),
+    RecommendationsScreen(key: _recommendationsKey),
     ProfileScreen(
       key: _profileKey,
       onPatientCodeChanged: _refreshDashboard,
@@ -152,6 +155,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   void _onItemTapped(int index) {
+    if (index == 1 && _selectedIndex != 1) {
+      _recommendationsKey.currentState?.playEntrance();
+    }
     setState(() {
       _selectedIndex = index;
     });
@@ -262,10 +268,18 @@ class _CompactNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _CompactNavItem(
-                  icon: Icons.person_rounded,
-                  label: l10n.profile,
+                  icon: Icons.tips_and_updates_rounded,
+                  label: l10n.recommendations,
                   selected: selectedIndex == 1,
                   onTap: () => onTap(1),
+                ),
+              ),
+              Expanded(
+                child: _CompactNavItem(
+                  icon: Icons.person_rounded,
+                  label: l10n.profile,
+                  selected: selectedIndex == 2,
+                  onTap: () => onTap(2),
                 ),
               ),
             ],
@@ -305,29 +319,42 @@ class _CompactNavItem extends StatelessWidget {
                   )
                 : Icon(icon, color: const Color(0xFF9CA3AF), size: 22),
             const SizedBox(height: 2),
-            selected
-                ? ShaderMask(
-                    shaderCallback: (bounds) =>
-                        AppleStyle.brandGradient.createShader(bounds),
-                    child: Text(
-                      label,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 11,
-                        color: Colors.white,
-                        letterSpacing: -0.1,
-                      ),
-                    ),
-                  )
-                : Text(
-                    label,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 11,
-                      color: Color(0xFF9CA3AF),
-                      letterSpacing: -0.1,
-                    ),
-                  ),
+            // Scales a long label (e.g. "Rekomendacijos") down instead of
+            // clipping it at large text sizes; Flexible caps its height to
+            // what the bar has left.
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: selected
+                      ? ShaderMask(
+                          shaderCallback: (bounds) =>
+                              AppleStyle.brandGradient.createShader(bounds),
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 11,
+                              color: Colors.white,
+                              letterSpacing: -0.1,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          label,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                            color: Color(0xFF9CA3AF),
+                            letterSpacing: -0.1,
+                          ),
+                        ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

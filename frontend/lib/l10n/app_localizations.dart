@@ -1161,6 +1161,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Subscribed successfully'**
   String get subscribed;
+
+  /// Recommendations tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get recommendations;
+
+  /// Recommendations: nutrition segment
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition'**
+  String get recSegmentDiet;
+
+  /// Recommendations: exercise segment
+  ///
+  /// In en, this message translates to:
+  /// **'Movement'**
+  String get recSegmentExercise;
+
+  /// Food advice level: good to eat
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get recLevelRecommended;
+
+  /// Food advice level: avoid or limit
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid or limit'**
+  String get recLevelLimit;
+
+  /// Food advice level: give up completely
+  ///
+  /// In en, this message translates to:
+  /// **'Cut out completely'**
+  String get recLevelAvoid;
+
+  /// Expands the nutrition introduction
+  ///
+  /// In en, this message translates to:
+  /// **'Read more'**
+  String get recReadMore;
+
+  /// Collapses the nutrition introduction
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get recShowLess;
+
+  /// Why the Kegel exercises card is locked
+  ///
+  /// In en, this message translates to:
+  /// **'Kegel exercises are unlocked for those who have learned the correct technique in the Physical Medicine and Rehabilitation (PMR) department.'**
+  String get recKegelLockedBody;
+
+  /// Button that opens the Kegel unlock question
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get recKegelUnlock;
+
+  /// Kegel unlock question
+  ///
+  /// In en, this message translates to:
+  /// **'Did you learn the correct technique in the PMR department?'**
+  String get recKegelDialogTitle;
+
+  /// Kegel unlock question: confirm
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, I did'**
+  String get recKegelDialogYes;
+
+  /// Kegel unlock question: cancel
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet'**
+  String get recKegelDialogNo;
 }
 
 class _AppLocalizationsDelegate

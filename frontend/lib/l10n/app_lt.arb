@@ -178,5 +178,18 @@
   "unsubscribePromos": "Atsisakyti reklaminių el. laiškų",
   "subscribePromos": "Prenumeruoti reklaminius el. laiškus",
   "unsubscribed": "Sėkmingai atsisakyta",
-  "subscribed": "Sėkmingai užsiprenumeruota"
+  "subscribed": "Sėkmingai užsiprenumeruota",
+  "recommendations": "Rekomendacijos",
+  "recSegmentDiet": "Mityba",
+  "recSegmentExercise": "Judėjimas",
+  "recLevelRecommended": "Rekomenduojama",
+  "recLevelLimit": "Vengti ar riboti",
+  "recLevelAvoid": "Atsisakyti",
+  "recReadMore": "Skaityti daugiau",
+  "recShowLess": "Rodyti mažiau",
+  "recKegelLockedBody": "Kegelio pratimai atrakinami tiems, kurie teisingos technikos išmoko Fizinės medicinos ir reabilitacijos (FMR) skyriuje.",
+  "recKegelUnlock": "Atrakinti",
+  "recKegelDialogTitle": "Ar išmokote teisingos technikos FMR skyriuje?",
+  "recKegelDialogYes": "Taip, išmokau",
+  "recKegelDialogNo": "Dar ne"
 }
