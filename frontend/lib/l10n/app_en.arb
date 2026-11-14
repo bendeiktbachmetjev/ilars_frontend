@@ -730,6 +730,10 @@
   "recKegelDialogYes": "Yes, I did",
   "@recKegelDialogYes": {"description": "Kegel unlock question: confirm"},
   "recKegelDialogNo": "Not yet",
-  "@recKegelDialogNo": {"description": "Kegel unlock question: cancel"}
+  "@recKegelDialogNo": {"description": "Kegel unlock question: cancel"},
+  "larsReminderTitle": "Please contact your doctor",
+  "@larsReminderTitle": {"description": "Doctor reminder notification title (LARS 30 or higher for 4 weekly questionnaires in a row)"},
+  "larsReminderBody": "Your LARS score has been 30 or higher for 4 weeks or longer.",
+  "@larsReminderBody": {"description": "Doctor reminder notification body"}
 }
 

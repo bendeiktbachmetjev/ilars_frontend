@@ -627,4 +627,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recKegelDialogNo => 'Not yet';
+
+  @override
+  String get larsReminderTitle => 'Please contact your doctor';
+
+  @override
+  String get larsReminderBody =>
+      'Your LARS score has been 30 or higher for 4 weeks or longer.';
 }
