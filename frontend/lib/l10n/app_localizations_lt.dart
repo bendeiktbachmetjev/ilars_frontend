@@ -635,4 +635,11 @@ class AppLocalizationsLt extends AppLocalizations {
 
   @override
   String get recKegelDialogNo => 'Dar ne';
+
+  @override
+  String get larsReminderTitle => 'Kreipkitės į savo gydytoją';
+
+  @override
+  String get larsReminderBody =>
+      'Jūsų LARS balas jau 4 savaites ar ilgiau yra 30 ar didesnis.';
 }

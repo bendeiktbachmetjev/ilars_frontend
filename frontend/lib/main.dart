@@ -6,6 +6,7 @@ import 'screens/dashboard/dashboard_screen.dart'
 import 'screens/profile/profile_screen.dart';
 import 'screens/recommendations/recommendations_screen.dart';
 import 'services/api_service.dart';
+import 'services/lars_reminder.dart';
 import 'services/notification_service.dart';
 import 'services/step_tracking_service.dart';
 import 'theme/apple_style.dart';
@@ -189,6 +190,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       title: l10n.notificationTitle,
       body: l10n.notificationBody,
       shouldRemind: _shouldRemindToday(),
+    );
+    await LarsReminder.check(
+      title: l10n.larsReminderTitle,
+      body: l10n.larsReminderBody,
     );
   }
 

@@ -1239,6 +1239,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not yet'**
   String get recKegelDialogNo;
+
+  /// Doctor reminder notification title (LARS 30 or higher for 4 weekly questionnaires in a row)
+  ///
+  /// In en, this message translates to:
+  /// **'Please contact your doctor'**
+  String get larsReminderTitle;
+
+  /// Doctor reminder notification body
+  ///
+  /// In en, this message translates to:
+  /// **'Your LARS score has been 30 or higher for 4 weeks or longer.'**
+  String get larsReminderBody;
 }
 
 class _AppLocalizationsDelegate

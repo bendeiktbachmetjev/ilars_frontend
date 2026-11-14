@@ -13,6 +13,7 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   static const int dailyNotificationId = 1;
+  static const int larsReminderId = 2;
 
   /// Initialize timezone and notification plugin
   Future<void> initialize() async {
@@ -141,6 +142,44 @@ class NotificationService {
   /// Cancel the daily notification
   Future<void> cancelDailyNotification() async {
     await _notificationsPlugin.cancel(dailyNotificationId);
+  }
+
+  /// The one-time "contact your doctor" reminder at [at], a time on the
+  /// phone's own clock (see lars_reminder.dart).
+  Future<void> scheduleLarsReminder({
+    required String title,
+    required String body,
+    required DateTime at,
+  }) async {
+    await _notificationsPlugin.zonedSchedule(
+      larsReminderId,
+      title,
+      body,
+      tz.TZDateTime.from(at, tz.UTC),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'lars_reminder',
+          'Doctor Reminder',
+          channelDescription:
+              'Reminder to contact your doctor when the LARS score stays high',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  /// Withdraw the doctor reminder, scheduled or already shown.
+  Future<void> cancelLarsReminder() async {
+    await _notificationsPlugin.cancel(larsReminderId);
   }
 
   /// Cancel all notifications

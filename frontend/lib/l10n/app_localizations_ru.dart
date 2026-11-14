@@ -637,4 +637,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get recKegelDialogNo => 'Пока нет';
+
+  @override
+  String get larsReminderTitle => 'Обратитесь к своему врачу';
+
+  @override
+  String get larsReminderBody =>
+      'Ваш балл LARS уже 4 недели или дольше — 30 или выше.';
 }

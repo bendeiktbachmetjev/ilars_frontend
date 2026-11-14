@@ -191,5 +191,7 @@
   "recKegelUnlock": "Atrakinti",
   "recKegelDialogTitle": "Ar išmokote teisingos technikos FMR skyriuje?",
   "recKegelDialogYes": "Taip, išmokau",
-  "recKegelDialogNo": "Dar ne"
+  "recKegelDialogNo": "Dar ne",
+  "larsReminderTitle": "Kreipkitės į savo gydytoją",
+  "larsReminderBody": "Jūsų LARS balas jau 4 savaites ar ilgiau yra 30 ar didesnis."
 }
