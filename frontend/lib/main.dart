@@ -220,7 +220,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ),
       body: IndexedStack(
         index: _selectedIndex,
-        children: _screens,
+        // Hidden tabs keep their state but do not animate (the
+        // Recommendations tab has looping exercise animations).
+        children: [
+          for (final (i, screen) in _screens.indexed)
+            TickerMode(enabled: i == _selectedIndex, child: screen),
+        ],
       ),
       bottomNavigationBar: _CompactNavBar(
         selectedIndex: _selectedIndex,

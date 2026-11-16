@@ -33,6 +33,7 @@ class RecommendationsScreen extends StatefulWidget {
 class RecommendationsScreenState extends State<RecommendationsScreen>
     with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
+  int _page = 0;
   late final AnimationController _entrance = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 520),
@@ -156,12 +157,26 @@ class RecommendationsScreenState extends State<RecommendationsScreen>
             Expanded(
               child: PageView(
                 controller: _pageController,
-                onPageChanged: (_) => HapticFeedback.selectionClick(),
+                onPageChanged: (page) {
+                  HapticFeedback.selectionClick();
+                  setState(() => _page = page);
+                },
+                // The page out of view keeps its state but stops its
+                // exercise animations.
                 children: [
-                  _Page(entrance: _entrance, items: _dietItems(content.diet)),
-                  _Page(
-                    entrance: _entrance,
-                    items: _exerciseItems(content.exercise),
+                  TickerMode(
+                    enabled: _page == 0,
+                    child: _Page(
+                      entrance: _entrance,
+                      items: _dietItems(content.diet),
+                    ),
+                  ),
+                  TickerMode(
+                    enabled: _page == 1,
+                    child: _Page(
+                      entrance: _entrance,
+                      items: _exerciseItems(content.exercise),
+                    ),
                   ),
                 ],
               ),

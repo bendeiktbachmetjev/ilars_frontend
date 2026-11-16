@@ -1,8 +1,8 @@
 // The Recommendations tab must fit a small phone at large text in every
-// language, keep its pages' state when switching, and keep the Kegel
-// exercises hidden until the logged-in patient confirms they learned the
-// technique. Texts come from the content files, so the tests survive new
-// translations.
+// language, keep its pages' state when switching, keep the Kegel exercises
+// hidden until the logged-in patient confirms they learned the technique,
+// and run its exercise animations only while they can be seen. Texts come
+// from the content files, so the tests survive new translations.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,10 +12,19 @@ import 'package:lars_app/content/recommendations/recommendations_content.dart';
 import 'package:lars_app/l10n/app_localizations.dart';
 import 'package:lars_app/main.dart';
 import 'package:lars_app/screens/recommendations/recommendations_screen.dart';
+import 'package:lars_app/screens/recommendations/widgets/exercise_animation.dart';
 import 'package:lars_app/screens/recommendations/widgets/motion.dart';
 
 const kegelKey = 'rec_kegel_unlocked_for';
 const codeKey = 'patient_code'; // where ApiService keeps the logged-in code
+
+/// Lets folds, swipes and the entrance finish. Not pumpAndSettle: an
+/// exercise animation loops for as long as its card is open.
+Future<void> settle(WidgetTester tester) async {
+  for (var i = 0; i < 12; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
 
 Future<void> pumpScreen(
   WidgetTester tester, {
@@ -40,7 +49,7 @@ Future<void> pumpScreen(
     ),
     home: const RecommendationsScreen(),
   ));
-  if (!reduceMotion) await tester.pumpAndSettle();
+  if (!reduceMotion) await settle(tester);
 }
 
 /// On screen and not hidden inside a folded card.
@@ -48,7 +57,7 @@ Finder shown(String text) => find.text(text).hitTestable();
 
 Future<void> scrollTo(WidgetTester tester, String text) async {
   await tester.ensureVisible(find.text(text));
-  await tester.pumpAndSettle();
+  await settle(tester);
 }
 
 Future<void> expectShown(WidgetTester tester, String text) async {
@@ -59,7 +68,7 @@ Future<void> expectShown(WidgetTester tester, String text) async {
 Future<void> tapText(WidgetTester tester, String text) async {
   await scrollTo(tester, text);
   await tester.tap(find.text(text));
-  await tester.pumpAndSettle();
+  await settle(tester);
 }
 
 void main() {
@@ -75,7 +84,7 @@ void main() {
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     SharedPreferences.setMockInitialValues({'has_seen_health_disclosure': true});
     await tester.pumpWidget(const MyApp());
-    await tester.pumpAndSettle();
+    await settle(tester);
 
     final label = tester.getRect(find.text('Recommendations'));
     expect(tester.getCenter(find.text('Dashboard')).dx, lessThan(label.left));
@@ -92,7 +101,7 @@ void main() {
     await tester.tap(find.text('Recommendations'));
     await tester.pump();
     expect(entrance(), 0);
-    await tester.pumpAndSettle();
+    await settle(tester);
     expect(entrance(), 1);
     expect(shown('Nutrition'), findsOneWidget);
     await tester.tap(find.text('Recommendations'));
@@ -121,7 +130,7 @@ void main() {
 
       // Movement, reached by swiping: every exercise, unlocking Kegel.
       await tester.fling(find.byType(PageView), const Offset(-300, 0), 1000);
-      await tester.pumpAndSettle();
+      await settle(tester);
       expect(shown(content.exercise.goalsTitle), findsOneWidget);
       final exercises =
           content.exercise.sections.expand((section) => section.exercises);
@@ -129,7 +138,7 @@ void main() {
         if (exercise.requiresUnlock) {
           await tapText(tester, l10n.recKegelUnlock);
           await tester.tap(find.text(l10n.recKegelDialogYes));
-          await tester.pumpAndSettle();
+          await settle(tester);
         } else if (exercise.numbered) {
           await tapText(tester, exercise.title);
         } // else: the walking card starts open.
@@ -140,7 +149,7 @@ void main() {
 
       // Back by tapping the segment: scroll position and open cards stayed.
       await tester.tap(find.text(l10n.recSegmentDiet));
-      await tester.pumpAndSettle();
+      await settle(tester);
       expect(shown(diet.reintroduction.detail!), findsOneWidget);
       expect(find.text(l10n.recShowLess, skipOffstage: false), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -181,6 +190,40 @@ void main() {
     await tester.tap(find.text(walk.title));
     await nextFrame();
     expect(shown(walk.steps.first), findsOneWidget);
+    // The walking figure stands still (once the tap's ripple has faded).
+    expect(find.byType(ExerciseAnimation), findsWidgets);
+    await tester.pump(const Duration(seconds: 2));
+    expect(tester.binding.hasScheduledFrame, isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('exercise animations run only while open and in view',
+      (tester) async {
+    await pumpScreen(tester);
+    final exercises = recommendationsFor(const Locale('en'))
+        .exercise
+        .sections
+        .expand((section) => section.exercises);
+    final walk = exercises.firstWhere((exercise) => !exercise.numbered);
+    final squat = exercises.firstWhere((exercise) => exercise.id == 'squat');
+
+    // The walking card starts open, so its figure walks.
+    await tester.tap(find.text('Movement'));
+    await settle(tester);
+    expect(tester.binding.hasScheduledFrame, isTrue);
+    // Walking, the chair squat and the ball squeeze have one, the rest not.
+    expect(find.byType(ExerciseAnimation, skipOffstage: false),
+        findsNWidgets(3));
+
+    await tapText(tester, walk.title); // fold: it stops
+    expect(tester.binding.hasScheduledFrame, isFalse);
+    await tapText(tester, squat.title); // open: it moves
+    expect(tester.binding.hasScheduledFrame, isTrue);
+
+    // On the other page it stops, though the card stays open.
+    await tester.tap(find.text('Nutrition'));
+    await settle(tester);
+    expect(tester.binding.hasScheduledFrame, isFalse);
     expect(tester.takeException(), isNull);
   });
 
@@ -197,7 +240,7 @@ void main() {
         WidgetTester tester, Map<String, Object> prefs) async {
       await pumpScreen(tester, prefs: prefs);
       await tester.tap(find.text('Movement'));
-      await tester.pumpAndSettle();
+      await settle(tester);
       await scrollTo(tester, kegel.title);
     }
 
@@ -208,7 +251,7 @@ void main() {
         findsOneWidget,
       );
       await tester.tap(find.text(answer));
-      await tester.pumpAndSettle();
+      await settle(tester);
     }
 
     testWidgets('are locked at first, and "Not yet" keeps them locked',
@@ -255,7 +298,7 @@ void main() {
       tester
           .state<RecommendationsScreenState>(find.byType(RecommendationsScreen))
           .playEntrance();
-      await tester.pumpAndSettle();
+      await settle(tester);
       await expectShown(tester, 'Unlock');
       expect(built, findsNothing);
     });

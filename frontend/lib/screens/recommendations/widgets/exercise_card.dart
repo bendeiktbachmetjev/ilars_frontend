@@ -6,6 +6,7 @@ import '../../../models/recommendations.dart';
 import '../../../theme/apple_style.dart';
 import '../../dashboard/widgets/pill_button.dart';
 import 'badges.dart';
+import 'exercise_animation.dart';
 import 'fold_card.dart';
 import 'motion.dart';
 
@@ -207,10 +208,16 @@ class _ExerciseCardState extends State<ExerciseCard> {
     // Centres each dot on the first line of its step at any text size.
     final double dotTop =
         (MediaQuery.textScalerOf(context).scale(15) * 1.42 - 6) / 2;
+    final ExerciseScene? scene = exerciseScenes[widget.exercise.id];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
       children: [
+        if (scene != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: ExerciseAnimation(scene: scene, playing: _expanded),
+          ),
         for (final step in widget.exercise.steps)
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
