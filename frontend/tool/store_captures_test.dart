@@ -5,8 +5,13 @@
 //   flutter test tool/store_captures_test.dart
 //
 // Writes store/pictures/raw/{en,lt}/*.png, each 1320 x 2868 (iPhone 17 Pro
-// Max: 440 x 956 points at 3x, safe area 62 top / 34 bottom). The status-bar
-// zone is left as the app paints it; the clock and icons are added later.
+// Max: 440 x 956 points at 3x, safe area 62 top / 34 bottom), and
+// store/pictures/raw/ipad/en/*.png, each 2064 x 2752 (iPad Pro 13": 1032 x
+// 1376 points at 2x, safe area 24 top / 20 bottom; only the five screens the
+// store pictures use). The status-bar zone is left as the app paints it; the
+// clock and icons are added later.
+//
+//   flutter test tool/store_captures_test.dart --plain-name ipad   (iPad only)
 //
 // No server and no device: every request the screens make is answered from
 // store/pictures/fixtures/patient.json (an invented patient), and the plugins
@@ -180,12 +185,28 @@ void _stubPlugins() {
       (call) async => null);
 }
 
-// ---- Phone -----------------------------------------------------------------
+// ---- Device ----------------------------------------------------------------
+
+/// The screen a run is drawn for: size in pixels, pixel ratio, safe area in
+/// points, and the folder under raw/ (the language is added to it).
+class _Device {
+  const _Device(this.size, this.ratio, this.top, this.bottom, this.folder);
+  final Size size;
+  final double ratio;
+  final double top;
+  final double bottom;
+  final String folder; // '' for the phone (raw/en), 'ipad/' (raw/ipad/en)
+}
+
+const _iphone = _Device(Size(1320, 2868), 3.0, 62, 34, '');
+const _ipad = _Device(Size(2064, 2752), 2.0, 24, 20, 'ipad/');
+var _device = _iphone;
 
 void _phone(WidgetTester tester, Locale locale) {
-  tester.view.physicalSize = const Size(1320, 2868);
-  tester.view.devicePixelRatio = 3.0;
-  const insets = FakeViewPadding(top: 62 * 3, bottom: 34 * 3);
+  tester.view.physicalSize = _device.size;
+  tester.view.devicePixelRatio = _device.ratio;
+  final insets = FakeViewPadding(
+      top: _device.top * _device.ratio, bottom: _device.bottom * _device.ratio);
   tester.view.padding = insets;
   tester.view.viewPadding = insets;
   tester.platformDispatcher.localesTestValue = [locale];
@@ -264,11 +285,11 @@ Future<void> _save(WidgetTester tester, String lang, String name) async {
   await tester.runAsync(() async {
     final boundary = _shotKey.currentContext!.findRenderObject()!
         as RenderRepaintBoundary;
-    final image = await boundary.toImage(pixelRatio: 3.0);
-    expect(image.width, 1320);
-    expect(image.height, 2868);
+    final image = await boundary.toImage(pixelRatio: _device.ratio);
+    expect(image.width, _device.size.width.round());
+    expect(image.height, _device.size.height.round());
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
-    File('$_out/$lang/$name.png')
+    File('$_out/${_device.folder}$lang/$name.png')
       ..createSync(recursive: true)
       ..writeAsBytesSync(data!.buffer.asUint8List());
   });
@@ -350,7 +371,7 @@ Future<void> _capture(WidgetTester tester, Locale locale) async {
       offset: 4, within: find.byType(DailyQuestionnaireScreen));
   // The Bristol stool pictures must stay out of the picture.
   final bristol = find.text(l10n.stoolConsistency);
-  final screenBottom = tester.view.physicalSize.height / 3;
+  final screenBottom = tester.view.physicalSize.height / _device.ratio;
   if (bristol.evaluate().isNotEmpty) {
     expect(tester.getTopLeft(bristol).dy, greaterThan(screenBottom),
         reason: 'Bristol scale would be visible');
@@ -361,15 +382,18 @@ Future<void> _capture(WidgetTester tester, Locale locale) async {
 
   // 3. Weekly LARS, the first two questions answered (gas: "yes, less than
   // once a week"; liquid leakage: "no, never"), the rest still open.
-  navigator.push(MaterialPageRoute(
-      builder: (_) => const WeeklyQuestionnaireScreen(initialData: {
-            'flatus_control': 1,
-            'liquid_stool_leakage': 0,
-          })));
-  await _frames(tester, 1000);
-  await _save(tester, lang, 'weekly-lars');
-  navigator.pop();
-  await _frames(tester, 1000);
+  // (Phone only: the iPad set uses the five screens of the store pictures.)
+  if (_device == _iphone) {
+    navigator.push(MaterialPageRoute(
+        builder: (_) => const WeeklyQuestionnaireScreen(initialData: {
+              'flatus_control': 1,
+              'liquid_stool_leakage': 0,
+            })));
+    await _frames(tester, 1000);
+    await _save(tester, lang, 'weekly-lars');
+    navigator.pop();
+    await _frames(tester, 1000);
+  }
 
   // 5. Recommendations, Diet.
   await _tapText(tester, l10n.recommendations);
@@ -383,10 +407,12 @@ Future<void> _capture(WidgetTester tester, Locale locale) async {
   await _frames(tester, 1900); // the walker mid-step
   await _save(tester, lang, 'recommendations-exercise');
 
-  // 7. Profile: patient code and settings only (no e-mail saved).
-  await _tapText(tester, l10n.profile);
-  await _settleData(tester);
-  await _save(tester, lang, 'profile');
+  // 7. Profile: patient code and settings only (no e-mail saved). Phone only.
+  if (_device == _iphone) {
+    await _tapText(tester, l10n.profile);
+    await _settleData(tester);
+    await _save(tester, lang, 'profile');
+  }
 
   // Leave nothing running.
   await tester.pumpWidget(const SizedBox());
@@ -399,8 +425,14 @@ void main() {
     _stubPlugins();
   });
 
-  for (final locale in const [Locale('en'), Locale('lt')]) {
-    testWidgets('store pictures ${locale.languageCode}', (tester) async {
+  for (final (device, locale) in const [
+    (_iphone, Locale('en')),
+    (_iphone, Locale('lt')),
+    (_ipad, Locale('en')),
+  ]) {
+    final label = device == _ipad ? 'ipad ' : '';
+    testWidgets('store pictures $label${locale.languageCode}', (tester) async {
+      _device = device;
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       debugDisableShadows = false;
       WidgetsApp.debugAllowBannerOverride = false;
@@ -411,6 +443,7 @@ void main() {
         );
       } finally {
         debugDefaultTargetPlatformOverride = null;
+        _device = _iphone;
         debugDisableShadows = true;
         WidgetsApp.debugAllowBannerOverride = true;
       }

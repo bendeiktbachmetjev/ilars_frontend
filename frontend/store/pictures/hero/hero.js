@@ -4,6 +4,11 @@
    Outside it: the wave and a few small pieces (day dots, a line card, food chips). */
 const q = new URLSearchParams(location.search);
 const kind = q.get('kind') || 'header';
+/* Liquid Glass (../shared/glass.js) on the pieces, the medallion rims, the wave and a few clear
+   beads: one switch for all three hero pictures; ?glass=0 / ?glass=1 overrides it. */
+const HERO_GLASS = true;
+const GLASS = (q.get('glass') ?? (HERO_GLASS ? '1' : '0')) !== '0';
+if (GLASS) Glass.on({ ink: '42, 27, 85', tint: '96, 58, 200', frost: '250, 247, 255' });
 
 /* Canvas and safe area [x, y, w, h]. The feature graphic has no official one:
    central 70 % of the width and 80 % of the height. */
@@ -16,7 +21,8 @@ const L = {
   /* d: patient medallion diameter (the doctor is 0.8 of it); cy: medallion centre (fraction of safe height);
      m: margin inside the safe area; fmax: largest phrase size;
      wave: x0 = lowest point, yLow = top edge there, yL/yR = top edge at the canvas sides, th = band thickness at x0;
-     pieces: ['progress'|'dots'|'food', x, y, width, rot, extra] — all outside the safe area */
+     pieces: ['progress'|'dots'|'food', x, y, width, rot, extra] — all outside the safe area
+     beads: [x, y, d] clear glass beads on the wave (glass only), outside the safe area */
   header: {
     d: 370, cy: .55, m: 30, fmax: 200,
     wave: { x0: 2200, yLow: 1250, yL: 160, yR: 640, p: 1.8, th: 120 },
@@ -26,6 +32,7 @@ const L = {
       ['food', 2930, 560, 200, 6, 'loaf'],
       ['food', 3260, 400, 180, -6, 'leaf'],
     ],
+    beads: [[3020, 1130, 64], [3120, 1215, 32]],
   },
   search: {
     d: 500, cy: .55, m: 50, fmax: 300,
@@ -36,6 +43,7 @@ const L = {
       ['food', 3150, 980, 270, 6, 'loaf'],
       ['food', 3460, 760, 240, -6, 'leaf'],
     ],
+    beads: [[3300, 1640, 86], [3430, 1745, 42]],
   },
   feature: {
     d: 150, cy: .52, m: 6, fmax: 90,
@@ -44,6 +52,7 @@ const L = {
       ['dots', 16, 120, 128, -6, { n: 4, filled: 3 }],
       ['food', 900, 130, 96, 6, 'leaf'],
     ],
+    beads: [[930, 330, 22]],
   },
 };
 const C = KINDS[kind], P = L[kind];
@@ -85,10 +94,16 @@ document.getElementById('grain').style.backgroundSize = `${grainTile}px ${grainT
   document.getElementById('arB').setAttribute('d', band(edge(1)));
   document.getElementById('arC').setAttribute('d', band(edge(2)));
   window.waveTop = top;
+  if (GLASS) {
+    Glass.wave(wv, ['arA', 'arB', 'arC'].map((id, k) => ({ path: document.getElementById(id), edge: edge(k) })),
+      -40, W + 40, sc, Math.max(4, W / 400));
+    Glass.medalRims(['doc', 'pat']);
+  }
 }
 
 /* ---------- outside the safe area ---------- */
 P.pieces.forEach(([k, x, y, w, rot, extra]) => ilarsPiece(story, k, x, y, w, rot, extra));
+if (GLASS) (P.beads || []).forEach(([x, y, d]) => Glass.bead(story, x, y, d));
 
 /* ---------- inside the safe area (after the font has loaded, so the phrase is measured right) ---------- */
 document.fonts.load('900 100px NunitoHero', 'A full life after rectal surgery').then(() => {

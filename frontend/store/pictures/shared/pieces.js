@@ -10,8 +10,14 @@
        'steps'     a footprint and a short progress bar
        'dots'      just a row of day dots on a pill: extra = { n, filled }
      ilarsMedal(parent, who, cx, cy, d, mirrored)     who = 'pat' | 'doc'
+
+   Glass: when the page has turned on shared/glass.js (Glass.on(), body.glass), every piece becomes
+   lightly frosted glass instead of a white card; the placeholder lines inside turn into soft ink
+   so they still read on the frost. The drawings themselves stay fully opaque.
 */
 const ILARS = {
+  glassLine: 'rgba(42, 27, 85, .12)',  // placeholder lines on glass
+  glassTrack: 'rgba(42, 27, 85, .08)', // empty part of the steps bar on glass
   violet: '#8F5CFF', orange: '#FF9A4A', solidOrange: '#F0812D',
   line: '#E6E1F3',               // grey-violet placeholder lines inside cards
   shadow: '60, 40, 140',         // rgb of the cool violet shadow
@@ -114,8 +120,14 @@ function ilarsPiece(parent, kind, x, y, w, rot = 0, extra) {
     background: '#fff', borderRadius: P.r * s + 'px', transform: `rotate(${rot}deg)`,
     boxShadow: `0 ${34 * s}px ${54 * s}px -${18 * s}px rgba(${ILARS.shadow}, .26), 0 ${5 * s}px ${11 * s}px rgba(${ILARS.shadow}, .10)`,
   });
-  e.innerHTML = `<svg width="${w}" height="${h}" viewBox="0 0 ${vw} ${vh}" style="display:block">${P.draw(u, extra)}</svg>`;
+  const glass = typeof Glass !== 'undefined' && document.body.classList.contains('glass');
+  let art = P.draw(u, extra);
+  if (glass) art = art.split(`fill="${ILARS.line}"`).join(`fill="${ILARS.glassLine}"`)
+    .split('fill="#EFEBF9"').join(`fill="${ILARS.glassTrack}"`);
+  e.innerHTML = `<svg width="${w}" height="${h}" viewBox="0 0 ${vw} ${vh}" style="display:block; position:relative; z-index:1">${art}</svg>`;
   parent.appendChild(e);
+  // glass scale: the rim's refraction band follows the piece's size (a small chip gets a thin rim)
+  if (glass) Glass.panel(e, P.r * s, Math.max(.4, Math.min(1.4, Math.sqrt(w * h) / 300)));
   return e;
 }
 
