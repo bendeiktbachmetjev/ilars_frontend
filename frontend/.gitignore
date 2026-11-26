@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Store pictures: working renders (store/pictures/export.sh copies the finished ones)
+/store/pictures/out/

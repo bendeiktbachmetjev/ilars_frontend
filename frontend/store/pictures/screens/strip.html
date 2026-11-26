@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>iLARS — store strip</title>
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  :root {
+    --paper: #F7F5FB;
+    --ink: #2A1B55;      /* headline line 1 */
+    --accent: #6A3FE0;   /* headline line 2 */
+  }
+  body { background: var(--paper); }
+
+  .grain {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='360'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .22  0 0 0 0 .16  0 0 0 0 .38  0 0 0 1.6 -.3'/></filter><rect width='360' height='360' filter='url(%23n)'/></svg>");
+    background-size: 360px 360px;
+    opacity: .05;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  /* ---------- headline ---------- */
+  .hl {
+    position: absolute; left: 0; right: 0;
+    text-align: center;
+    font-weight: 900;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    font-size: var(--hl, 120px);
+  }
+  .hl .l { display: block; white-space: nowrap; }
+  .hl .l > span { display: inline-block; }
+  .hl .l2 { color: var(--accent); }
+
+  /* ---------- phone ---------- */
+  /* The phone is rotated (frame and screen together) about its centre. The shadow sits on an
+     unrotated wrapper, so it always falls straight down, whatever the tilt. Cool violet shadow. */
+  .tilt { position: absolute; left: 0; top: 0; width: 0; height: 0;
+    filter: drop-shadow(0 70px 70px rgba(60, 40, 140, .18)) drop-shadow(0 10px 12px rgba(40, 28, 100, .20)); }
+  .tilt.drawn {
+    filter: drop-shadow(0 calc(53px * var(--dz)) calc(53px * var(--dz)) rgba(60, 40, 140, .18))
+            drop-shadow(0 calc(8px * var(--dz)) calc(9px * var(--dz)) rgba(40, 28, 100, .20));
+  }
+  .phone { transform-origin: 50% 50%; }
+
+  /* drawn generic phone (Play): dark bezel, rounded screen, no camera, notch or buttons */
+  .phone.drawn {
+    background: #111114;
+    box-shadow: inset 0 0 0 calc(2px * var(--dz)) #2A2A31;
+  }
+  .phone.drawn .dscreen { position: absolute; overflow: hidden; background: #fff; }
+  .phone.drawn .dscreen img { position: absolute; left: 0; display: block; }
+
+  /* phones carry z 1…9 among themselves; everything of the story lies above them */
+  #story { position: absolute; left: 0; top: 0; z-index: 20; }
+  .hl { z-index: 20; }
+  #guide { position: absolute; left: 0; top: 0; z-index: 30; pointer-events: none; }
+</style>
+<script src="../shared/people.js"></script>
+<script src="../shared/pieces.js"></script>
+</head>
+<body>
+<script>ilarsPeople();</script>
+
+<!-- ======= the wave: three soft bands across the whole strip (size set by the script) ======= -->
+<svg id="arch" style="position:absolute; left:0; top:0">
+  <defs>
+    <filter id="paperShadow" x="-5%" y="-10%" width="110%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#3C2A8C" flood-opacity=".14"/>
+    </filter>
+    <filter id="layerShadow" x="-5%" y="-10%" width="110%" height="130%">
+      <feDropShadow dx="0" dy="-6" stdDeviation="9" flood-color="#3C2A8C" flood-opacity=".10"/>
+    </filter>
+    <!-- outer to inner: lavender, orchid pink, soft orange (a gentle violet-to-orange sunset) -->
+    <linearGradient id="gArA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3DBFF"/><stop offset="1" stop-color="#D8CDFF"/>
+    </linearGradient>
+    <linearGradient id="gArB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5D7EA"/><stop offset="1" stop-color="#F0CBE3"/>
+    </linearGradient>
+    <linearGradient id="gArC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFDDC2"/><stop offset="1" stop-color="#FFD2AF"/>
+    </linearGradient>
+  </defs>
+  <path id="arA" fill="url(#gArA)" filter="url(#paperShadow)"/>
+  <path id="arB" fill="url(#gArB)" filter="url(#layerShadow)"/>
+  <path id="arC" fill="url(#gArC)" filter="url(#layerShadow)"/>
+</svg>
+<div class="grain"></div>
+
+<div id="shots"></div>
+<div id="story"></div>
+<div id="headlines"></div>
+<svg id="guide"></svg>
+
+<script>
+/* =====================================================================
+   TEXT: one block per language. Pick it with ?lang=… (default en).
+   Each language names its five captures and its five two-line headlines.
+   Headlines are DRAFTS until the owner confirms them; change the strings here only.
+   ===================================================================== */
+const TEXT = {
+  en: {
+    screens: ['dashboard', 'daily', 'food', 'recommendations-diet', 'recommendations-exercise'],
+    headlines: [
+      ['Track your recovery', 'day by day'],
+      ['A quick check-in', 'every day'],
+      ['See how food', 'affects you'],
+      ['Clear advice', 'on what to eat'],
+      ['Gentle exercises', 'for every day'],
+    ],
+  },
+  // lt: {
+  //   screens: ['dashboard', 'daily', 'food', 'recommendations-diet', 'recommendations-exercise'],
+  //   headlines: [['…', '…'], ['…', '…'], ['…', '…'], ['…', '…'], ['…', '…']],
+  // },
+};
+
+/* =====================================================================
+   CONFIGS: everything that depends on the output size, one per store.
+   The page draws CONFIGS[?target=…] (default ios). Story positions are page pixels on that
+   target's canvas (shot n starts at x = (n-1) × shotW).
+   ===================================================================== */
+// What must stay whole inside its own screenshot, per capture, as [x1, y1, x2, y2] in capture pixels
+// (1320 × 2868). Checked below; the result is in <body data-check>.
+const KEEP = {
+  'dashboard':                [[460, 690, 860, 745], [60, 765, 1185, 1400], [100, 2175, 1220, 2268]],  // legend, chart, Fill It Now
+  'daily':                    [[60, 660, 1262, 1332]],                                                  // first four answer cards
+  'food':                     [[270, 425, 1050, 480], [48, 531, 1271, 1497]],                           // question, first two cards
+  'recommendations-diet':     [[50, 375, 1265, 470], [50, 1170, 1265, 2018]],                           // tabs, first two tips
+  'recommendations-exercise': [[50, 375, 1265, 470], [50, 545, 1265, 1225], [50, 1750, 1265, 2232]],    // tabs, goals, walking figure
+};
+
+const CONFIGS = {};
+CONFIGS.ios = {
+  shotW: 1320, shotH: 2868,
+  // Phone: width, tilt (deg, + = clockwise), centre in the shot's own pixels, z = which lies on top.
+  shots: [
+    { pos: 'low',  w: 1080, angle:   9, cx:  831, cy: 1800, z: 2 },
+    { pos: 'high', w:  980, angle:  -6, cx:  925, cy: 1180, z: 4 },
+    { pos: 'low',  w: 1040, angle:  11, cx:  764, cy: 1800, z: 3 },
+    { pos: 'high', w:  950, angle: -10, cx:  855, cy: 1180, z: 7 },
+    { pos: 'low',  w:  940, angle:   7, cx:  670, cy: 1810, z: 6 },
+  ],
+  frame: { src: '../shared/frame.png', w: 1470, h: 3000, sx: 75, sy: 66, sw: 1320, sh: 2868, r: 190,
+           statusbar: '../shared/statusbar.png' },   // Apple's iPhone frame + a real status bar
+  headline: { col: 1160, max: 200, min: 40, top: 180, bottom: 2420 },
+  k: 1,
+  wave: { edges: { top: [1560, 420], b1: [1960, 800], b2: [2380, 1200], bot: [3120, 1800] }, step: 20, bleed: 40 },
+  story: [
+    //   ['medal', who, centreX, centreY, diameter, mirrored]
+    //   ['piece', kind, x, y, width, rot, extra]
+    ['piece', 'progress', 40, 590, 420, -4],                       // 1
+    ['medal', 'pat', 195, 2530, 330],                              // 1
+    ['piece', 'check', 1320 + 60, 1600, 360, 5],                   // 2
+    ['piece', 'food', 2640 + 40, 620, 175, -7, 'leaf'],            // 3
+    ['piece', 'food', 2640 + 215, 735, 160, 6, 'loaf'],            // 3
+    ['piece', 'food', 2640 + 60, 880, 160, -3, 'cup'],             // 3
+    ['medal', 'doc', 3960 + 225, 1680, 300],                       // 4
+    ['piece', 'steps', 5280 + 40, 560, 330, -4],                   // 5
+    ['medal', 'pat', 5280 + 1120, 2470, 300],                      // 5
+  ],
+};
+
+/* Google Play: 1080 × 1920, a drawn generic phone (Apple's frame is for Apple platforms only),
+   captures shown from y = 186 so the empty status-bar zone is cut off. */
+CONFIGS.play = {
+  shotW: 1080, shotH: 1920,
+  shots: [
+    { pos: 'low',  w: 760, angle:   9, cx: 720, cy: 1215, z: 2 },
+    { pos: 'high', w: 700, angle:  -6, cx: 780, cy:  800, z: 4 },
+    { pos: 'low',  w: 740, angle:  11, cx: 650, cy: 1215, z: 3 },
+    { pos: 'high', w: 680, angle: -10, cx: 735, cy:  800, z: 5 },
+    { pos: 'low',  w: 680, angle:   7, cx: 545, cy: 1225, z: 6 },
+  ],
+  frame: { drawn: true, bezel: 15, radius: 58, cropTop: 186, capW: 1320, capH: 2868 },
+  headline: { col: 950, max: 200, min: 30, top: 95, bottom: 1600 },
+  k: 0.763,
+  wave: { edges: { top: [956, 186], b1: [1261, 476], b2: [1582, 781], bot: [2146, 1239] }, step: 20, bleed: 40 },
+  story: [
+    ['piece', 'progress', 30, 420, 300, -4],
+    ['medal', 'pat', 150, 1600, 240],
+    ['piece', 'check', 1080 + 50, 1060, 250, 5],
+    ['piece', 'food', 2160 + 30, 430, 115, -7, 'leaf'],
+    ['piece', 'food', 2160 + 150, 505, 105, 5, 'loaf'],
+    ['piece', 'food', 2160 + 45, 610, 105, -2, 'cup'],
+    ['medal', 'doc', 3240 + 180, 1120, 210],
+    ['piece', 'steps', 4320 + 30, 400, 250, -4],
+    ['medal', 'pat', 4320 + 915, 1650, 230],
+  ],
+};
+
+const Q = new URLSearchParams(location.search);
+const TARGET = Q.get('target') || 'ios', LANG = Q.get('lang') || 'en';
+const CONFIG = CONFIGS[TARGET], T = TEXT[LANG];
+if (!CONFIG) throw new Error('unknown target ' + TARGET);
+if (!T) throw new Error('no text for language ' + LANG);
+
+/* ---------------- derived sizes ---------------- */
+const C = CONFIG, N_SHOTS = C.shots.length, W = C.shotW * N_SHOTS, H = C.shotH;
+const F = C.frame;
+const root = document.documentElement;
+Object.entries(F.drawn
+    ? { W, H, shotW: C.shotW, k: C.k }
+    : { W, H, shotW: C.shotW, fw: F.w, fh: F.h, sx: F.sx, sy: F.sy, sw: F.sw, sh: F.sh, sr: F.r, k: C.k })
+  .forEach(([k, v]) => root.style.setProperty('--' + k, v));
+document.body.dataset.strip = `${C.shotW}x${C.shotH}x${N_SHOTS}`;
+const screenSrc = i => `../raw/${LANG}/${T.screens[i]}.png`;
+
+/* ---------------- phones ---------------- */
+const phoneH = w => {
+  if (!F.drawn) return w * F.h / F.w;
+  const sw = w - 2 * F.bezel;
+  return sw * (F.capH - F.cropTop) / F.capW + 2 * F.bezel;
+};
+// a capture pixel (px, py) → page pixels, for phone i
+function capToPage(i, px, py) {
+  const s = C.shots[i], w = s.w, h = phoneH(w);
+  let x, y;
+  if (F.drawn) { const sc = (w - 2 * F.bezel) / F.capW; x = F.bezel + px * sc; y = F.bezel + (py - F.cropTop) * sc; }
+  else { const sc = w / F.w; x = (F.sx + px) * sc; y = (F.sy + py) * sc; }
+  x -= w / 2; y -= h / 2;
+  const a = s.angle * Math.PI / 180, c = Math.cos(a), si = Math.sin(a);
+  return [i * C.shotW + s.cx + x * c - y * si, s.cy + x * si + y * c];
+}
+function phoneCorners(s, i) {
+  const w = s.w, h = phoneH(w), a = s.angle * Math.PI / 180, c = Math.cos(a), si = Math.sin(a);
+  const cx = i * C.shotW + s.cx, cy = s.cy;
+  return [[-w / 2, -h / 2], [w / 2, -h / 2], [w / 2, h / 2], [-w / 2, h / 2]]
+    .map(([x, y]) => [cx + x * c - y * si, cy + x * si + y * c]);
+}
+const shotsEl = document.getElementById('shots');
+C.shots.forEach((s, i) => {
+  const box = document.createElement('div');
+  box.className = 'shot';
+  box.style.left = (i * C.shotW) + 'px';
+  box.style.zIndex = s.z || 0;
+  const w = s.w, h = phoneH(w), left = s.cx - w / 2, top = s.cy - h / 2;
+  const place = `left:${left}px; top:${top}px; transform: rotate(${s.angle}deg)`;
+  if (F.drawn) {
+    const b = F.bezel, sw = w - 2 * b, sh = h - 2 * b, imgH = sw * F.capH / F.capW, off = F.cropTop * sw / F.capW;
+    box.innerHTML = `<div class="tilt drawn" style="--dz:${C.k}"><div class="phone drawn" style="width:${w}px; height:${h}px; ${place}; ` +
+      `border-radius:${F.radius + b}px; --dz:${C.k}">` +
+      `<div class="dscreen" style="left:${b}px; top:${b}px; width:${sw}px; height:${sh}px; border-radius:${F.radius}px">` +
+      `<img src="${screenSrc(i)}" style="width:${sw}px; height:${imgH}px; top:${-off}px"></div></div></div>`;
+  } else {
+    box.innerHTML = `<div class="tilt"><div class="phone" style="--w:${w}px; ${place}">` +
+      `<img class="screen" src="${screenSrc(i)}"><img class="sbar" src="${F.statusbar}">` +
+      `<img class="frame" src="${F.src}"></div></div>`;
+  }
+  shotsEl.appendChild(box);
+});
+
+/* ---------------- the wave ----------------
+   A periodic cosine: low at the centre of shots 1, 3, 5, high at 2, 4;
+   every edge crosses each seam at (low + high) / 2. */
+const hump = x => (1 + Math.cos(2 * Math.PI * (x - 1.5 * C.shotW) / (2 * C.shotW))) / 2;
+const E = {};
+for (const [k, [lo, hi]] of Object.entries(C.wave.edges)) E[k] = x => lo + (hi - lo) * hump(x);
+function band(fTop, fBot) {
+  const pts = [], { step, bleed } = C.wave;
+  for (let x = -bleed; x <= W + bleed; x += step) pts.push([x, fTop(x)]);
+  for (let x = W + bleed; x >= -bleed; x -= step) pts.push([x, fBot(x)]);
+  return 'M' + pts.map(p => p[0] + ' ' + p[1].toFixed(1)).join(' L') + ' Z';
+}
+const arch = document.getElementById('arch');
+arch.setAttribute('width', W); arch.setAttribute('height', H); arch.setAttribute('viewBox', `0 0 ${W} ${H}`);
+document.getElementById('arA').setAttribute('d', band(E.top, E.bot));
+document.getElementById('arB').setAttribute('d', band(E.b1, E.bot));
+document.getElementById('arC').setAttribute('d', band(E.b2, E.bot));
+
+/* ---------------- story pieces ---------------- */
+const story = document.getElementById('story');
+C.story.forEach(([kind, ...a]) => {
+  if (kind === 'medal') ilarsMedal(story, ...a);
+  else if (kind === 'piece') ilarsPiece(story, ...a);
+});
+
+/* ---------------- headlines ---------------- */
+const hlBox = document.getElementById('headlines');
+T.headlines.forEach(([l1, l2], i) => {
+  const d = document.createElement('div');
+  d.className = 'hl'; d.dataset.shot = i;
+  d.innerHTML = `<span class="l"><span></span></span><span class="l l2"><span></span></span>`;
+  d.querySelectorAll('.l > span')[0].textContent = l1;
+  d.querySelectorAll('.l > span')[1].textContent = l2;
+  hlBox.appendChild(d);
+});
+
+/* one size for all shots, the largest at which every line fits */
+document.fonts.ready.then(() => {
+  const hls = [...document.querySelectorAll('.hl')];
+  hls.forEach(h => { h.style.left = (+h.dataset.shot * C.shotW) + 'px'; h.style.width = C.shotW + 'px'; });
+  const spans = [...document.querySelectorAll('.hl .l > span')];
+  let size = C.headline.max;
+  for (; size > C.headline.min; size -= 1) {
+    root.style.setProperty('--hl', size + 'px');
+    if (spans.every(s => s.getBoundingClientRect().width <= C.headline.col)) break;
+  }
+  hls.forEach(h => {
+    const pos = C.shots[+h.dataset.shot].pos;
+    h.style.top = (pos === 'low' ? C.headline.top : C.headline.bottom) + 'px';
+  });
+  const nunito = document.fonts.check(`900 ${size}px Nunito`) &&
+    [...document.fonts].some(f => f.family.replace(/"/g, '') === 'Nunito' && f.status === 'loaded');
+  document.body.dataset.hl = size;
+  document.body.dataset.font = nunito ? 'nunito' : 'FALLBACK';
+
+  /* ---- checks (read by `--dump-dom`, data-check) ---- */
+  const polys = C.shots.map(phoneCorners);
+  const inside = (p, [x, y]) => { let s = 0; for (let k = 0; k < p.length; k++) { const [x1, y1] = p[k], [x2, y2] = p[(k + 1) % p.length];
+    const c = (x2 - x1) * (y - y1) - (y2 - y1) * (x - x1); s += c > 0 ? 1 : -1; } return Math.abs(s) === p.length; };
+  const distPolyRect = (p, r) => {
+    let best = 1e9;
+    for (let k = 0; k < 4; k++) { const [x1, y1] = p[k], [x2, y2] = p[(k + 1) % 4];
+      for (let t = 0; t <= 1; t += 0.002) { const x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t;
+        const dx = Math.max(r.left - x, 0, x - r.right), dy = Math.max(r.top - y, 0, y - r.bottom);
+        best = Math.min(best, Math.hypot(dx, dy)); } }
+    if ([[r.left, r.top], [r.right, r.top], [r.left, r.bottom], [r.right, r.bottom]].some(q => inside(p, q))) best = -1;
+    return Math.round(best);
+  };
+  const lines = spans.map(s => { const r = s.getBoundingClientRect(), pad = (r.height - size * 1.0) / 2;
+    return { left: r.left, right: r.right, top: r.top + pad, bottom: r.bottom - pad }; });
+  // keep areas as page polygons
+  const keeps = C.shots.map((s, i) => KEEP[T.screens[i]].map(([x1, y1, x2, y2]) =>
+    [[x1, y1], [x2, y1], [x2, y2], [x1, y2]].map(([x, y]) => capToPage(i, x, y))));
+  const pieces = [...story.children].map(e => e.getBoundingClientRect());
+  const guide = document.getElementById('guide');
+  guide.setAttribute('width', W); guide.setAttribute('height', H);
+  const out = { hl: size, phones: polys.map((p, i) => {
+    const xs = p.map(q => q[0]), ys = p.map(q => q[1]), s = C.shots[i];
+    const seamL = i * C.shotW, seamR = (i + 1) * C.shotW;
+    let keepMargin = 1e9, keepCovered = 0, piecesOnKeep = 0;
+    keeps[i].forEach(kp => {
+      kp.forEach(([x, y]) => { keepMargin = Math.min(keepMargin, x - seamL, seamR - x, y, H - y); });
+      // sample the keep area; covered by a higher phone or by a story piece?
+      for (let u = 0; u <= 1; u += 0.05) for (let v = 0; v <= 1; v += 0.05) {
+        const a = kp[0], b = kp[1], d = kp[3];
+        const pt = [a[0] + (b[0] - a[0]) * u + (d[0] - a[0]) * v, a[1] + (b[1] - a[1]) * u + (d[1] - a[1]) * v];
+        if (polys.some((q, j) => j !== i && (C.shots[j].z || 0) > (s.z || 0) && inside(q, pt))) keepCovered++;
+        if (pieces.some(r => pt[0] > r.left && pt[0] < r.right && pt[1] > r.top && pt[1] < r.bottom)) piecesOnKeep++;
+      }
+      if (Q.get('guide')) guide.insertAdjacentHTML('beforeend',
+        `<polygon points="${kp.map(q => q.join(',')).join(' ')}" fill="rgba(255,0,80,.12)" stroke="#ff0050" stroke-width="4"/>`);
+    });
+    return { i: i + 1, w: s.w, angle: s.angle,
+      cross: i < N_SHOTS - 1 ? +((Math.max(...xs) - seamR) / s.w).toFixed(3) : null,
+      minX: Math.round(Math.min(...xs) - seamL), maxX: Math.round(Math.max(...xs) - seamL),
+      top: Math.round(Math.min(...ys)), bottom: Math.round(Math.max(...ys) - H),
+      hlGap: Math.min(...lines.map(r => distPolyRect(p, r))),
+      keepMargin: Math.round(keepMargin), keepCovered, piecesOnKeep };
+  }), piecesOnHeadline: pieces.filter(r => lines.some(l => r.left < l.right && r.right > l.left && r.top < l.bottom + 40 && r.bottom > l.top - 40)).length };
+  document.body.dataset.check = JSON.stringify(out);
+  document.title = `hl=${size} font=${document.body.dataset.font} strip=${document.body.dataset.strip}`;
+});
+</script>
+</body>
+</html>

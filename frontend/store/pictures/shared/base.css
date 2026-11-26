@@ -1,0 +1,74 @@
+/* Shared base for the store pictures.
+   The page script sets every size from its CONFIG object, as CSS variables on :root:
+     --W, --H        whole strip (shot width × number of shots, shot height)
+     --shotW         one screenshot's width
+     --fw, --fh      phone frame picture size
+     --sx, --sy      where the see-through screen opening starts in that picture
+     --sw, --sh      size of the screen opening
+     --sr            corner radius of the screen opening
+   Nothing in this file assumes a canvas size. */
+
+@font-face {
+  font-family: "Nunito";
+  src: url("Nunito.ttf") format("truetype");  /* copy in this folder, licence OFL.txt */
+  font-weight: 200 1000;
+  font-style: normal;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: calc(var(--W) * 1px);
+  height: calc(var(--H) * 1px);
+  overflow: hidden;
+}
+
+body {
+  position: relative;
+  font-family: "Nunito", -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+/* One screenshot = one .shot box (the script places it at left = index × shotW).
+   Anything that should run across the seams goes directly in <body>. */
+.shot { position: absolute; top: 0; width: calc(var(--shotW) * 1px); height: calc(var(--H) * 1px); }
+
+/* Phone: a device frame picture laid over an app capture. Set the size with --w;
+   the height follows the frame's proportions. Position with left/top.
+   For a shadow use `filter: drop-shadow(...)` on .phone (it follows the outline). */
+.phone {
+  --w: 1000px;
+  position: absolute;
+  width: var(--w);
+  height: calc(var(--w) * var(--fh) / var(--fw));
+}
+.phone .screen {
+  position: absolute;
+  left: calc(var(--w) * var(--sx) / var(--fw));
+  top: calc(var(--w) * var(--sy) / var(--fw));
+  width: calc(var(--w) * var(--sw) / var(--fw));
+  height: calc(var(--w) * var(--sh) / var(--fw));
+  border-radius: calc(var(--w) * var(--sr) / var(--fw));
+  object-fit: cover;
+  display: block;
+  background: #fff;
+}
+/* iOS status bar (black on white) laid over the capture's empty top zone; multiply keeps the app's background */
+.phone .sbar {
+  position: absolute;
+  left: calc(var(--w) * var(--sx) / var(--fw));
+  top: calc(var(--w) * var(--sy) / var(--fw));
+  width: calc(var(--w) * var(--sw) / var(--fw));
+  height: auto;
+  display: block;
+  border-radius: calc(var(--w) * var(--sr) / var(--fw)) calc(var(--w) * var(--sr) / var(--fw)) 0 0;
+  mix-blend-mode: multiply;
+}
+.phone .frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>iLARS — hero</title>
+<style>
+  @font-face {
+    font-family: "NunitoHero";
+    src: url("../shared/Nunito.ttf") format("truetype");
+    font-weight: 200 1000;
+    font-style: normal;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow: hidden; }
+  body {
+    position: relative;
+    background: #F7F5FB;
+    font-family: "NunitoHero", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+  #bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(70% 80% at 50% 45%, #FAF9FD 0%, #F7F5FB 55%, #F2EFF9 100%);
+  }
+  .grain {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='360'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .22  0 0 0 0 .16  0 0 0 0 .38  0 0 0 1.6 -.3'/></filter><rect width='360' height='360' filter='url(%23n)'/></svg>");
+    opacity: .05;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+  .hl {
+    position: absolute;
+    text-align: center;
+    font-weight: 900;
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    color: #2A1B55;
+    white-space: nowrap;
+  }
+  .hl .l { display: block; }
+  .hl .l2 { color: #6A3FE0; }
+</style>
+<script src="../shared/people.js"></script>
+<script src="../shared/pieces.js"></script>
+</head>
+<body>
+<div id="bg"></div>
+<script>ilarsPeople();</script>
+
+<svg id="wave" style="position:absolute; left:0; top:0">
+  <defs>
+    <filter id="paperShadow" x="-5%" y="-20%" width="110%" height="140%">
+      <feDropShadow id="ps" dx="0" dy="12" stdDeviation="14" flood-color="#3C2A8C" flood-opacity=".14"/>
+    </filter>
+    <filter id="layerShadow" x="-5%" y="-20%" width="110%" height="140%">
+      <feDropShadow id="ls" dx="0" dy="-6" stdDeviation="9" flood-color="#3C2A8C" flood-opacity=".10"/>
+    </filter>
+    <linearGradient id="gArA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3DBFF"/><stop offset="1" stop-color="#D8CDFF"/>
+    </linearGradient>
+    <linearGradient id="gArB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5D7EA"/><stop offset="1" stop-color="#F0CBE3"/>
+    </linearGradient>
+    <linearGradient id="gArC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFDDC2"/><stop offset="1" stop-color="#FFD2AF"/>
+    </linearGradient>
+  </defs>
+  <path id="arA" fill="url(#gArA)" filter="url(#paperShadow)"/>
+  <path id="arB" fill="url(#gArB)" filter="url(#layerShadow)"/>
+  <path id="arC" fill="url(#gArC)" filter="url(#layerShadow)"/>
+</svg>
+<div class="grain" id="grain"></div>
+<div id="story"></div>
+<!-- the phrase: the owner's own store phrase, exactly -->
+<div class="hl" id="hl"><span class="l">A full life</span><span class="l l2">after rectal surgery</span></div>
+<div id="guide"></div>
+
+<script src="hero.js"></script>
+</body>
+</html>

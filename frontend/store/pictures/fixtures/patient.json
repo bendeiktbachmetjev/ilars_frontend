@@ -1,0 +1,584 @@
+{
+ "_note": "Invented data for store pictures. Not a real patient.",
+ "patient_code": "DEMO-0426",
+ "registered_days_ago": 122,
+ "next_questionnaire": {
+  "status": "ok",
+  "questionnaire_type": "daily",
+  "is_today_filled": false,
+  "today_filled_type": null,
+  "reason": "Daily questionnaire available"
+ },
+ "weekly_lars": [
+  {
+   "days_ago": 120,
+   "score": 36
+  },
+  {
+   "days_ago": 113,
+   "score": 37
+  },
+  {
+   "days_ago": 106,
+   "score": 32
+  },
+  {
+   "days_ago": 99,
+   "score": 32
+  },
+  {
+   "days_ago": 92,
+   "score": 32
+  },
+  {
+   "days_ago": 85,
+   "score": 32
+  },
+  {
+   "days_ago": 78,
+   "score": 30
+  },
+  {
+   "days_ago": 71,
+   "score": 29
+  },
+  {
+   "days_ago": 64,
+   "score": 28
+  },
+  {
+   "days_ago": 57,
+   "score": 29
+  },
+  {
+   "days_ago": 50,
+   "score": 28
+  },
+  {
+   "days_ago": 43,
+   "score": 26
+  },
+  {
+   "days_ago": 36,
+   "score": 25
+  },
+  {
+   "days_ago": 29,
+   "score": 26
+  },
+  {
+   "days_ago": 22,
+   "score": 26
+  },
+  {
+   "days_ago": 15,
+   "score": 25
+  },
+  {
+   "days_ago": 8,
+   "score": 24
+  }
+ ],
+ "steps": [
+  {
+   "days_ago": 122,
+   "steps": 3935
+  },
+  {
+   "days_ago": 121,
+   "steps": 3276
+  },
+  {
+   "days_ago": 120,
+   "steps": 4888
+  },
+  {
+   "days_ago": 119,
+   "steps": 4324
+  },
+  {
+   "days_ago": 118,
+   "steps": 3052
+  },
+  {
+   "days_ago": 117,
+   "steps": 3190
+  },
+  {
+   "days_ago": 116,
+   "steps": 3205
+  },
+  {
+   "days_ago": 115,
+   "steps": 4003
+  },
+  {
+   "days_ago": 114,
+   "steps": 4292
+  },
+  {
+   "days_ago": 113,
+   "steps": 3036
+  },
+  {
+   "days_ago": 112,
+   "steps": 2934
+  },
+  {
+   "days_ago": 111,
+   "steps": 3817
+  },
+  {
+   "days_ago": 110,
+   "steps": 3722
+  },
+  {
+   "days_ago": 109,
+   "steps": 3832
+  },
+  {
+   "days_ago": 108,
+   "steps": 3354
+  },
+  {
+   "days_ago": 107,
+   "steps": 3814
+  },
+  {
+   "days_ago": 106,
+   "steps": 3636
+  },
+  {
+   "days_ago": 105,
+   "steps": 3630
+  },
+  {
+   "days_ago": 104,
+   "steps": 3400
+  },
+  {
+   "days_ago": 103,
+   "steps": 2823
+  },
+  {
+   "days_ago": 102,
+   "steps": 3075
+  },
+  {
+   "days_ago": 101,
+   "steps": 5380
+  },
+  {
+   "days_ago": 100,
+   "steps": 4340
+  },
+  {
+   "days_ago": 99,
+   "steps": 4713
+  },
+  {
+   "days_ago": 98,
+   "steps": 2628
+  },
+  {
+   "days_ago": 97,
+   "steps": 3578
+  },
+  {
+   "days_ago": 96,
+   "steps": 3227
+  },
+  {
+   "days_ago": 95,
+   "steps": 4415
+  },
+  {
+   "days_ago": 94,
+   "steps": 4151
+  },
+  {
+   "days_ago": 93,
+   "steps": 5107
+  },
+  {
+   "days_ago": 92,
+   "steps": 4549
+  },
+  {
+   "days_ago": 91,
+   "steps": 3434
+  },
+  {
+   "days_ago": 90,
+   "steps": 4739
+  },
+  {
+   "days_ago": 89,
+   "steps": 3826
+  },
+  {
+   "days_ago": 88,
+   "steps": 4150
+  },
+  {
+   "days_ago": 87,
+   "steps": 4351
+  },
+  {
+   "days_ago": 86,
+   "steps": 4868
+  },
+  {
+   "days_ago": 85,
+   "steps": 3874
+  },
+  {
+   "days_ago": 84,
+   "steps": 4610
+  },
+  {
+   "days_ago": 83,
+   "steps": 3953
+  },
+  {
+   "days_ago": 82,
+   "steps": 3794
+  },
+  {
+   "days_ago": 80,
+   "steps": 4541
+  },
+  {
+   "days_ago": 79,
+   "steps": 4816
+  },
+  {
+   "days_ago": 78,
+   "steps": 4171
+  },
+  {
+   "days_ago": 77,
+   "steps": 3874
+  },
+  {
+   "days_ago": 76,
+   "steps": 3529
+  },
+  {
+   "days_ago": 75,
+   "steps": 3557
+  },
+  {
+   "days_ago": 74,
+   "steps": 4411
+  },
+  {
+   "days_ago": 73,
+   "steps": 5638
+  },
+  {
+   "days_ago": 72,
+   "steps": 4475
+  },
+  {
+   "days_ago": 71,
+   "steps": 4469
+  },
+  {
+   "days_ago": 70,
+   "steps": 4526
+  },
+  {
+   "days_ago": 69,
+   "steps": 4615
+  },
+  {
+   "days_ago": 68,
+   "steps": 3388
+  },
+  {
+   "days_ago": 67,
+   "steps": 4228
+  },
+  {
+   "days_ago": 66,
+   "steps": 4486
+  },
+  {
+   "days_ago": 65,
+   "steps": 5869
+  },
+  {
+   "days_ago": 64,
+   "steps": 5526
+  },
+  {
+   "days_ago": 63,
+   "steps": 5289
+  },
+  {
+   "days_ago": 62,
+   "steps": 4563
+  },
+  {
+   "days_ago": 61,
+   "steps": 4923
+  },
+  {
+   "days_ago": 60,
+   "steps": 5471
+  },
+  {
+   "days_ago": 59,
+   "steps": 5708
+  },
+  {
+   "days_ago": 58,
+   "steps": 4636
+  },
+  {
+   "days_ago": 57,
+   "steps": 4713
+  },
+  {
+   "days_ago": 56,
+   "steps": 5189
+  },
+  {
+   "days_ago": 55,
+   "steps": 5477
+  },
+  {
+   "days_ago": 54,
+   "steps": 5441
+  },
+  {
+   "days_ago": 53,
+   "steps": 5871
+  },
+  {
+   "days_ago": 52,
+   "steps": 4912
+  },
+  {
+   "days_ago": 51,
+   "steps": 5605
+  },
+  {
+   "days_ago": 50,
+   "steps": 5963
+  },
+  {
+   "days_ago": 49,
+   "steps": 4776
+  },
+  {
+   "days_ago": 48,
+   "steps": 4804
+  },
+  {
+   "days_ago": 47,
+   "steps": 5371
+  },
+  {
+   "days_ago": 46,
+   "steps": 4690
+  },
+  {
+   "days_ago": 45,
+   "steps": 5490
+  },
+  {
+   "days_ago": 44,
+   "steps": 5909
+  },
+  {
+   "days_ago": 43,
+   "steps": 5556
+  },
+  {
+   "days_ago": 42,
+   "steps": 5471
+  },
+  {
+   "days_ago": 41,
+   "steps": 4711
+  },
+  {
+   "days_ago": 40,
+   "steps": 4228
+  },
+  {
+   "days_ago": 39,
+   "steps": 5647
+  },
+  {
+   "days_ago": 38,
+   "steps": 6406
+  },
+  {
+   "days_ago": 37,
+   "steps": 5709
+  },
+  {
+   "days_ago": 36,
+   "steps": 6588
+  },
+  {
+   "days_ago": 35,
+   "steps": 5391
+  },
+  {
+   "days_ago": 34,
+   "steps": 4923
+  },
+  {
+   "days_ago": 33,
+   "steps": 4737
+  },
+  {
+   "days_ago": 32,
+   "steps": 4742
+  },
+  {
+   "days_ago": 31,
+   "steps": 6135
+  },
+  {
+   "days_ago": 30,
+   "steps": 6838
+  },
+  {
+   "days_ago": 29,
+   "steps": 5186
+  },
+  {
+   "days_ago": 28,
+   "steps": 5732
+  },
+  {
+   "days_ago": 27,
+   "steps": 4076
+  },
+  {
+   "days_ago": 26,
+   "steps": 4986
+  },
+  {
+   "days_ago": 25,
+   "steps": 5977
+  },
+  {
+   "days_ago": 24,
+   "steps": 6627
+  },
+  {
+   "days_ago": 23,
+   "steps": 6018
+  },
+  {
+   "days_ago": 22,
+   "steps": 5745
+  },
+  {
+   "days_ago": 21,
+   "steps": 6455
+  },
+  {
+   "days_ago": 20,
+   "steps": 5384
+  },
+  {
+   "days_ago": 19,
+   "steps": 5779
+  },
+  {
+   "days_ago": 18,
+   "steps": 6516
+  },
+  {
+   "days_ago": 17,
+   "steps": 6296
+  },
+  {
+   "days_ago": 16,
+   "steps": 6532
+  },
+  {
+   "days_ago": 14,
+   "steps": 6452
+  },
+  {
+   "days_ago": 13,
+   "steps": 6474
+  },
+  {
+   "days_ago": 12,
+   "steps": 4935
+  },
+  {
+   "days_ago": 11,
+   "steps": 6356
+  },
+  {
+   "days_ago": 10,
+   "steps": 6022
+  },
+  {
+   "days_ago": 9,
+   "steps": 7244
+  },
+  {
+   "days_ago": 8,
+   "steps": 7213
+  },
+  {
+   "days_ago": 7,
+   "steps": 6729
+  },
+  {
+   "days_ago": 6,
+   "steps": 5410
+  },
+  {
+   "days_ago": 5,
+   "steps": 5909
+  },
+  {
+   "days_ago": 4,
+   "steps": 6174
+  },
+  {
+   "days_ago": 3,
+   "steps": 6680
+  },
+  {
+   "days_ago": 2,
+   "steps": 7173
+  },
+  {
+   "days_ago": 1,
+   "steps": 6562
+  }
+ ],
+ "daily_in_progress": {
+  "stool_count": 3,
+  "pads_used": 1,
+  "urgency": "Yes",
+  "night_stools": "No",
+  "leakage": "None",
+  "incomplete_evacuation": "No",
+  "bloating": 3,
+  "impact_score": 2,
+  "activity_interfere": 2
+ },
+ "food_in_progress": {
+  "food_vegetables_all": 2,
+  "food_root_vegetables": 1,
+  "food_whole_grain_bread": 2,
+  "food_soft_fruits_no_skin": 1,
+  "drink_water": 6,
+  "drink_coffee": 1,
+  "drink_tea": 2
+ }
+}
