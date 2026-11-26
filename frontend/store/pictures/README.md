@@ -10,7 +10,8 @@ cd store/pictures && ./render.sh ios && ./render.sh play && hero/render.sh && ./
 
 `./store-view.sh ios` (or `play`) shows the row as the store shows it: `out/ios-store.png`.
 
-The finished files go to `store/screenshots/ios` (1320 × 2868), `store/screenshots/ios-6.5` (1284 × 2778),
+The finished files go to `store/screenshots/ios-6.3` (1206 × 2622 — the size App Store Connect asks
+for), `store/screenshots/ios` (1320 × 2868), `store/screenshots/ios-6.5` (1284 × 2778),
 `store/screenshots/android` (1080 × 1920), `store/google-play` (JPEG + feature graphic) and
 `store/app-store` (header and search pictures).
 
